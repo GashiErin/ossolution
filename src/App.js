@@ -1,24 +1,37 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import fullTranslations from './translations.full.json';
+
+const translations = {
+  DE: {
+    ...fullTranslations.DE,
+    'Independent creative studio':'Unabhängiges Kreativstudio','Navigate / 2026':'Navigation / 2026','Work':'Projekte','Services':'Leistungen','Studio':'Studio','Contact':'Kontakt','WE MAKE':'WIR MACHEN','DIGITAL':'DIGITALES','FEEL ALIVE.':'SPÜRBAR.','EXPLORE':'PROJEKTE','OUR WORK':'ENTDECKEN','SCROLL TO DISCOVER':'WEITER SCROLLEN','SELECTED COLLABORATORS':'AUSGEWÄHLTE PARTNER','BUILT TO':'GEMACHT, UM','BE FELT.':'ZU WIRKEN.','VIEW ALL PROJECTS':'ALLE PROJEKTE','ONE STUDIO.':'EIN STUDIO.','NO SILOS.':'KEINE SILOS.','HOW WE WORK':'WIE WIR ARBEITEN','FOUR STAGES.':'VIER PHASEN.','NO THEATRE.':'KEIN THEATER.','Discover':'Entdecken','Define':'Definieren','Build':'Umsetzen','Launch & steward':'Start & Betreuung','HOW WE THINK':'WIE WIR DENKEN','THE STUDIO':'DAS STUDIO','BUILT DIFFERENT':'ANDERS AUFGEBAUT','SENIOR PEOPLE.':'ERFAHRENE MENSCHEN.','ZERO THEATRE.':'NULL THEATER.','CORE TEAM':'KERNTEAM','THE PEOPLE IN THE ROOM':'DIE MENSCHEN IM RAUM','MAKE THE WORK.':'MACHEN DIE ARBEIT.','EVERYDAY TOOLBOX':'UNSERE WERKZEUGE','IDEAS FIRST.':'IDEEN ZUERST.','TOOLS SECOND.':'WERKZEUGE DANACH.','THE USEFUL QUESTIONS.':'DIE WICHTIGEN FRAGEN.','GIVE US THE':'NENNEN SIE UNS DAS','REAL PROBLEM.':'ECHTE PROBLEM.','What are you planning?':'Was planen Sie?','Capabilities':'Kompetenzen','Timeline':'Zeitrahmen','Investment range':'Investitionsrahmen','Name':'Name','Company':'Unternehmen','Email':'E-Mail','Role':'Rolle','Tell us about it':'Erzählen Sie uns davon','PREPARE INQUIRY':'ANFRAGE VORBEREITEN','DIRECT CONTACT':'DIREKTER KONTAKT','DISCOVERY CALL':'ERSTGESPRÄCH','30 minutes.':'30 Minuten.','No pitch deck.':'Keine Präsentation.','REQUEST A CALL':'GESPRÄCH ANFRAGEN','CLIENT PROJECT':'KUNDENPROJEKT','SOLUTION BLUEPRINT':'LÖSUNGSKONZEPT','CAPABILITIES':'KOMPETENZEN','SCOPE':'UMFANG','THE CHALLENGE':'DIE HERAUSFORDERUNG','OUR RESPONSE':'UNSERE LÖSUNG','THE RESULT':'DAS ERGEBNIS','VISIT LIVE WEBSITE':'LIVE-WEBSITE ÖFFNEN','NEXT CASE':'NÄCHSTES PROJEKT','CLOSE':'SCHLIESSEN','BACK TO TOP':'NACH OBEN','This quarter':'Dieses Quartal','Next quarter':'Nächstes Quartal','This year':'Dieses Jahr','Just exploring':'Nur informieren','To be discussed':'Nach Absprache'
+  },
+  FR: {
+    ...fullTranslations.FR,
+    'Independent creative studio':'Studio créatif indépendant','Navigate / 2026':'Navigation / 2026','Work':'Projets','Services':'Services','Studio':'Studio','Contact':'Contact','WE MAKE':'NOUS RENDONS','DIGITAL':'LE DIGITAL','FEEL ALIVE.':'VIVANT.','EXPLORE':'DÉCOUVREZ','OUR WORK':'NOS PROJETS','SCROLL TO DISCOVER':'FAITES DÉFILER','SELECTED COLLABORATORS':'COLLABORATEURS SÉLECTIONNÉS','BUILT TO':'CONÇU POUR','BE FELT.':'ÊTRE RESSENTI.','VIEW ALL PROJECTS':'VOIR TOUS LES PROJETS','ONE STUDIO.':'UN STUDIO.','NO SILOS.':'SANS SILOS.','HOW WE WORK':'NOTRE MÉTHODE','FOUR STAGES.':'QUATRE ÉTAPES.','NO THEATRE.':'SANS CINÉMA.','Discover':'Découvrir','Define':'Définir','Build':'Construire','Launch & steward':'Lancer & accompagner','HOW WE THINK':'NOTRE VISION','THE STUDIO':'LE STUDIO','BUILT DIFFERENT':'CONSTRUIT AUTREMENT','SENIOR PEOPLE.':'DES EXPERTS.','ZERO THEATRE.':'SANS CINÉMA.','CORE TEAM':'ÉQUIPE PRINCIPALE','THE PEOPLE IN THE ROOM':'LES PERSONNES PRÉSENTES','MAKE THE WORK.':'FONT LE TRAVAIL.','EVERYDAY TOOLBOX':'NOS OUTILS','IDEAS FIRST.':'LES IDÉES D’ABORD.','TOOLS SECOND.':'LES OUTILS ENSUITE.','THE USEFUL QUESTIONS.':'LES BONNES QUESTIONS.','GIVE US THE':'PARLEZ-NOUS DU','REAL PROBLEM.':'VRAI PROBLÈME.','What are you planning?':'Que prévoyez-vous ?','Capabilities':'Compétences','Timeline':'Calendrier','Investment range':'Budget envisagé','Name':'Nom','Company':'Entreprise','Email':'E-mail','Role':'Fonction','Tell us about it':'Parlez-nous du projet','PREPARE INQUIRY':'PRÉPARER LA DEMANDE','DIRECT CONTACT':'CONTACT DIRECT','DISCOVERY CALL':'APPEL DÉCOUVERTE','30 minutes.':'30 minutes.','No pitch deck.':'Sans présentation.','REQUEST A CALL':'DEMANDER UN APPEL','CLIENT PROJECT':'PROJET CLIENT','SOLUTION BLUEPRINT':'CONCEPT DE SOLUTION','CAPABILITIES':'COMPÉTENCES','SCOPE':'PÉRIMÈTRE','THE CHALLENGE':'LE DÉFI','OUR RESPONSE':'NOTRE RÉPONSE','THE RESULT':'LE RÉSULTAT','VISIT LIVE WEBSITE':'VISITER LE SITE','NEXT CASE':'PROJET SUIVANT','CLOSE':'FERMER','BACK TO TOP':'RETOUR EN HAUT','This quarter':'Ce trimestre','Next quarter':'Trimestre prochain','This year':'Cette année','Just exploring':'Je me renseigne','To be discussed':'À discuter'
+  }
+};
+
+const originalText = new WeakMap();
+const originalAttributes = new WeakMap();
 
 const projects = [
-  { id:'01', name:'Synapse', type:'AI PRODUCT', tone:'violet', mark:'SYN//APSE', year:'2026', impact:'63% faster review cycles', stack:'React · FastAPI · PostgreSQL · AI', scope:'Strategy · Product · Engineering', problem:'Research teams were losing decisions across meetings, documents and disconnected AI tools.', solution:'A secure knowledge workspace that turns source material into cited decisions, searchable briefs and repeatable review workflows.', outcome:'The concept demonstrates how a complex AI workflow can remain transparent, navigable and useful to non-technical teams.' },
-  { id:'02', name:'Noma Objects', type:'IDENTITY / COMMERCE', tone:'coral', mark:'NOMA', year:'2026', impact:'Three markets, one storefront', stack:'React · Commerce API · Motion', scope:'Identity · UX · Development', problem:'A design label needed one system for product stories, limited drops and international retail partners.', solution:'We connected a modular identity to a narrative commerce experience with editorial product pages and flexible campaign blocks.', outcome:'A coherent prototype that can scale from a five-product collection to a multi-market catalogue.' },
-  { id:'03', name:'Northstar', type:'PLATFORM / EXPERIENCE', tone:'acid', mark:'NORTH\nSTAR', year:'2025', impact:'One operational source of truth', stack:'TypeScript · Node · Postgres', scope:'Architecture · UX · Platform', problem:'Distributed operations teams were coordinating launches through spreadsheets and status meetings.', solution:'A role-aware command centre combining milestones, risk signals, approvals and accountable decision logs.', outcome:'The product model reduces reporting overhead and makes project risk visible before deadlines move.' },
-  { id:'04', name:'Field Notes', type:'EDITORIAL / MOTION', tone:'blue', mark:'FIELD®', year:'2025', impact:'12 formats, one publishing system', stack:'React · Headless CMS · GSAP', scope:'Editorial · Motion · Web', problem:'A research publisher needed long-form stories to feel distinct without redesigning every article.', solution:'A composable editorial system with kinetic type, responsive media treatments and reusable narrative transitions.', outcome:'Editors can create expressive releases while preserving accessibility, performance and brand consistency.' },
-  { id:'05', name:'Formless', type:'WEBGL / CAMPAIGN', tone:'mono', mark:'F—LESS', year:'2025', impact:'Interactive at every breakpoint', stack:'WebGL · Three.js · React', scope:'Creative code · 3D · Campaign', problem:'A technical materials company needed to explain invisible physical behaviour without another product film.', solution:'An interactive WebGL story translates pressure, flow and deformation into a responsive product narrative.', outcome:'A memorable launch concept where the interaction itself demonstrates the core technology.' },
-  { id:'06', name:'Afterdark', type:'CULTURE / IMMERSIVE', tone:'orange', mark:'A/D', year:'2024', impact:'A living archive for 80 events', stack:'React · Web Audio · CMS', scope:'Brand · Platform · Experience', problem:'A cultural programme had years of performances but no meaningful way to explore its archive.', solution:'A sound-led archive connecting artists, venues and fragments through an exploratory visual index.', outcome:'Past programming becomes a useful discovery tool instead of a chronological list.' },
-  { id:'07', name:'Relay', type:'LOGISTICS / MOBILE', tone:'acid', mark:'RELAY', year:'2024', impact:'Offline-first field workflow', stack:'React Native · Node · SQLite', scope:'Mobile · Backend · Operations', problem:'Field teams needed reliable task capture in locations where connectivity could not be assumed.', solution:'An offline-first mobile workflow with queued evidence uploads, route context and conflict-safe synchronization.', outcome:'The prototype preserves every field action and makes recovery understandable when a connection returns.' },
-  { id:'08', name:'Common Ground', type:'CLIMATE / DATA', tone:'violet', mark:'COMMON\nGROUND', year:'2024', impact:'14 data sources unified', stack:'React · Python · Mapbox', scope:'Data · UX · Visualization', problem:'Regional climate data was technically available but fragmented across institutions and formats.', solution:'A shared spatial interface normalizes datasets and turns them into comparable local scenarios.', outcome:'Planners can explore evidence without needing to understand the structure of every source dataset.' },
+  { id:'01', name:'EDA Solar', type:'RENEWABLE ENERGY / WEB', tone:'acid', mark:'EDA\nSOLAR', image:'/projects/eda-solar.webp', year:'LIVE', impact:'Solar energy, made easier to understand', stack:'UX / UI · Development · Content', scope:'Website · Solutions · Lead journey', url:'https://www.eda-ks.com/', problem:'EDA Solar needed one clear digital home for a broad offer spanning on-grid, off-grid and hybrid solar systems, battery storage and EV charging.', solution:'We designed and developed a structured company website that guides households and businesses from the right energy solution through consultation, planning, installation and activation.', outcome:'A live bilingual platform that brings EDA’s solutions, process and contact path together in one accessible experience.' },
+  { id:'02', name:'Novatex', type:'MANUFACTURING / PRODUCT CATALOG', tone:'coral', mark:'NOVA\nTEX', image:'/projects/novatex.webp', year:'LIVE', impact:'Technical products with a clearer commercial story', stack:'UX / UI · Development · Catalog', scope:'Website · Product system · Enquiries', url:'https://www.novatex-ks.com/', problem:'Novatex manufactures fiberglass mesh in numerous weights and grid specifications, so buyers need technical clarity without losing the company story and service offer.', solution:'We designed and developed a focused product website that organizes specifications, custom production, delivery, quality assurance and consulting into a straightforward buyer journey.', outcome:'A live company and product platform that gives European and regional customers a direct route from product comparison to enquiry.' },
+  { id:'03', name:'Sahgri SARL', type:'CONSTRUCTION / CORPORATE WEB', tone:'orange', mark:'SAHGRI\nSARL', image:'/projects/sahgri.webp', year:'LIVE', impact:'Craft, consultancy and references in one place', stack:'UX / UI · Development · Content', scope:'Website · Services · Project archive', url:'https://sahgri.ch/', problem:'Sahgri’s work covers plastering, painting, consulting, suspended ceilings and acoustic solutions, backed by substantial Swiss reference projects that needed room to speak.', solution:'We designed and developed a service-led website that separates each expertise, presents reference work and makes quotation and contact information easy to reach.', outcome:'A live business platform connecting Sahgri’s specialist capabilities, completed projects and enquiry flow for clients across French-speaking Switzerland.' },
+  { id:'04', name:'ORA-TEK Engineering', type:'PRECISION ENGINEERING / WEB', tone:'blue', mark:'ORA—TEK', image:'/projects/oratek.webp', year:'LIVE', impact:'Precision manufacturing presented with precision', stack:'UX / UI · Development · Multilingual', scope:'Website · Expertise · Machine park', url:'https://ora-tek-engineering.com/', problem:'ORA-TEK combines CNC manufacturing, engineering, industrial project leadership and training—a technical offer that must establish capability and trust quickly.', solution:'We designed and developed a multilingual website around its FANUC machine park, precision-mechanics expertise, quality commitment and direct access to the engineering team.', outcome:'A live four-language platform that presents the company’s capabilities and equipment to both regional and Swiss industrial audiences.' },
+  { id:'05', name:'Editor Operations', type:'CUSTOM BACKEND / AUTOMATION', tone:'violet', mark:'EDITOR\nFLOW', year:'LIVE', impact:'One upload. Every system stays in sync.', stack:'Custom backend · APIs · Automation', scope:'Frame.io · Airtable · monday.com · Slack', problem:'A media company’s editors were repeating the same administrative work across four tools after every video upload, creating delays, inconsistent records and missed production updates.', solution:'We built a custom event-driven backend that receives new Frame.io uploads, saves structured video data in Airtable, creates and updates production items in monday.com, and sends the right Slack notifications automatically.', outcome:'Editors can stay focused on the work while a reliable backend moves project data, status and notifications through the production workflow. The client remains confidential, so identifying information is intentionally omitted.' },
+  { id:'06', name:'Lead Response Engine', type:'CUSTOM AUTOMATION / BLUEPRINT', tone:'acid', mark:'LEAD\nENGINE', year:'READY', impact:'From new enquiry to qualified opportunity', stack:'Custom backend · CRM · Notifications', scope:'Lead capture · Qualification · Follow-up', demo:true, problem:'Service businesses lose valuable leads when enquiries sit in an inbox, qualification is inconsistent and follow-up depends on someone manually copying information between tools.', solution:'We shaped a custom-code workflow that validates each enquiry, enriches the company record, scores fit against agreed rules, updates the CRM, alerts the right owner and prepares a personalized follow-up task.', outcome:'A reusable automation blueprint that can be adapted to a client’s existing forms, CRM, email and internal tools—without adding another fragile chain of per-task automation subscriptions.' },
 ];
 
 const services = [
   { n: '01', title: 'Brand systems', text: 'Distinct identities built to move, stretch and remain unmistakable across every digital surface.', tags: ['Strategy', 'Identity', 'Art direction', 'Campaigns'] },
   { n: '02', title: 'Digital experiences', text: 'High-performance websites and products where interaction, narrative and utility work as one system.', tags: ['UX / UI', 'Development', 'WebGL', 'Creative code'] },
   { n: '03', title: 'Motion worlds', text: 'Motion languages that give brands a pulse—from tiny interface gestures to cinematic launch films.', tags: ['Motion systems', '3D', 'Film', 'Prototyping'] },
-  { n: '04', title: 'Product engineering', text: 'Robust web platforms and internal tools shaped around real workflows, clear architecture and maintainable systems.', tags: ['React', 'APIs', 'Data', 'Platforms'] },
-  { n: '05', title: 'AI systems', text: 'Useful intelligence embedded into products with transparent workflows, evaluation and human control.', tags: ['LLM integration', 'Search', 'Automation', 'Evaluation'] },
-  { n: '06', title: 'Cloud & launch', text: 'The infrastructure, observability and release discipline required to move from prototype to dependable production.', tags: ['Cloud', 'CI/CD', 'Performance', 'Stewardship'] },
+  { n: '04', title: 'Custom automation', text: 'We replace expensive Zapier, Make and n8n workflows with maintainable custom code. For suitable workloads, this can reduce recurring automation costs by up to 70%.', tags: ['API integrations', 'Custom backends', 'Queues', 'Monitoring'] },
+  { n: '05', title: 'Security & pentesting', text: 'Authorized security testing that finds exploitable weaknesses, explains the real business risk and helps your team fix them responsibly.', tags: ['Web pentesting', 'API security', 'Hardening', 'Remediation'] },
+  { n: '06', title: 'Web & mobile products', text: 'Websites, internal platforms and mobile apps designed around the exact job your team or customers need to complete.', tags: ['Websites', 'Mobile apps', 'React', 'Platforms'] },
 ];
 
 const process = [
@@ -55,6 +68,7 @@ function Arrow({ diagonal = false }) {
 }
 
 function App() {
+  const [language, setLanguage] = useState('EN');
   const [menuOpen, setMenuOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [testimonial, setTestimonial] = useState(0);
@@ -69,6 +83,33 @@ function App() {
     window.addEventListener('keydown', onKey);
     return () => { clearTimeout(timer); window.removeEventListener('keydown', onKey); };
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = language.toLowerCase();
+    const translatePage = () => {
+      const dictionary = translations[language] || {};
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      let node;
+      while ((node = walker.nextNode())) {
+        if (!node.nodeValue.trim() || ['SCRIPT','STYLE'].includes(node.parentElement?.tagName)) continue;
+        if (!originalText.has(node)) originalText.set(node, node.nodeValue);
+        const source = originalText.get(node);
+        const clean = source.trim();
+        const translated = Object.entries(dictionary).sort((a,b) => b[0].length - a[0].length).reduce((value, [from, to]) => value.split(from).join(to), clean);
+        node.nodeValue = source.replace(clean, translated);
+      }
+      document.querySelectorAll('[placeholder]').forEach(element => {
+        if (!originalAttributes.has(element)) originalAttributes.set(element, element.getAttribute('placeholder'));
+        const source = originalAttributes.get(element);
+        const translated = Object.entries(dictionary).sort((a,b) => b[0].length - a[0].length).reduce((value, [from, to]) => value.split(from).join(to), source);
+        element.setAttribute('placeholder', translated);
+      });
+    };
+    translatePage();
+    const observer = new MutationObserver(() => translatePage());
+    observer.observe(document.body, { childList:true, subtree:true });
+    return () => observer.disconnect();
+  }, [language]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen || selectedProject ? 'hidden' : '';
@@ -88,7 +129,7 @@ function App() {
     const subject = encodeURIComponent(`Project inquiry from ${formData.name}`);
     const body = encodeURIComponent(`Name: ${formData.name}\nCompany: ${formData.company}\nRole: ${formData.role}\nProject: ${formData.type}\nCapabilities: ${formData.capabilities.join(', ') || 'Not selected'}\nTimeline: ${formData.timeline}\nBudget: ${formData.budget}\n\nBrief:\n${formData.brief}`);
     setFormStatus('ready');
-    window.location.href = `mailto:hello@orbit.studio?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:contact@ossolution.com?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -104,6 +145,9 @@ function App() {
           <strong>ORBIT®</strong>
         </a>
         <div className="header-status"><i /> Independent creative studio</div>
+        <div className="language-switcher" aria-label="Language selector">
+          {['EN','DE','FR'].map(code => <button key={code} className={language === code ? 'active' : ''} onClick={() => setLanguage(code)} aria-pressed={language === code}>{code}</button>)}
+        </div>
         <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen}>
           <span>{menuOpen ? 'CLOSE' : 'MENU'}</span>
           <b><i /><i /></b>
@@ -117,7 +161,7 @@ function App() {
             <small>0{index + 1}</small><span>{item}</span><Arrow diagonal />
           </a>
         ))}
-        <div className="menu-bottom"><span>Budapest / Worldwide</span><span>hello@orbit.studio</span></div>
+        <div className="menu-bottom"><span>Budapest / Worldwide</span><span>contact@ossolution.com</span></div>
       </nav>
 
       <main id="top">
@@ -147,13 +191,14 @@ function App() {
 
         <section className="work section-pad" id="work">
           <div className="section-heading">
-            <div><span className="eyebrow-label">( CONCEPT CASE STUDIES )</span><h2>BUILT TO<br />BE FELT.</h2></div>
-            <p>Original demonstration projects showing how we frame product, identity and technology challenges. Replace them with verified client work before launch.</p>
+            <div><span className="eyebrow-label">( SELECTED WORK / LIVE PROJECTS + BLUEPRINTS )</span><h2>BUILT TO<br />BE FELT.</h2></div>
+            <p>Live client platforms and solution blueprints across energy, manufacturing, construction, precision engineering and custom automation.</p>
           </div>
           <div className="project-grid">
             {projects.map((project, index) => (
               <article className={`project-card ${index % 3 === 1 ? 'tall' : ''}`} key={project.name}>
                 <div className={`project-visual ${project.tone}`}>
+                  {project.image ? <img src={project.image} alt={`${project.name} campaign artwork`} loading="lazy" /> : <div className={`workflow-art ${project.demo ? 'lead-art' : ''}`} aria-hidden="true" />}
                   <div className="visual-grid" />
                   <span className="project-mark">{project.mark.split('\n').map((line) => <span key={line}>{line}</span>)}</span>
                   <span className="project-index">({project.id})</span>
@@ -257,12 +302,12 @@ function App() {
             {formStatus === 'invalid' && <p className="form-message error" role="alert">Please add your name, a valid email address and a short project brief.</p>}
             {formStatus === 'ready' && <p className="form-message" role="status">Your email application should now be open with the project brief prepared.</p>}
           </form>
-          <aside className="direct-contact"><div><span>( DIRECT CONTACT )</span><a href="mailto:hello@orbit.studio">hello@orbit.studio</a><p>For an NDA, RFP or a quick fit check. Replace this prototype address with your verified studio inbox before launch.</p></div><div><span>( DISCOVERY CALL )</span><h3>30 minutes.<br />No pitch deck.</h3><p>Request a focused call about the product, constraint and next useful decision.</p><button onClick={requestCall}>REQUEST A CALL <Arrow diagonal /></button></div></aside>
+          <aside className="direct-contact"><div><span>( DIRECT CONTACT )</span><a href="mailto:contact@ossolution.com">contact@ossolution.com</a><p>For an NDA, RFP or a quick fit check, contact our studio directly.</p></div><div><span>( DISCOVERY CALL )</span><h3>30 minutes.<br />No pitch deck.</h3><p>Request a focused call about the product, constraint and next useful decision.</p><button onClick={requestCall}>REQUEST A CALL <Arrow diagonal /></button></div></aside>
         </section>
 
         <section className="contact" id="contact">
-          <div className="contact-top section-pad"><span>( ENOUGH TALK )</span><a href="mailto:hello@orbit.studio">hello@orbit.studio</a></div>
-          <a className="contact-cta" href="mailto:hello@orbit.studio"><span>LET'S MAKE</span><span>SOMETHING <i>MOVE.</i></span><b><Arrow diagonal /></b></a>
+          <div className="contact-top section-pad"><span>( ENOUGH TALK )</span><a href="mailto:contact@ossolution.com">contact@ossolution.com</a></div>
+          <a className="contact-cta" href="mailto:contact@ossolution.com"><span>LET'S MAKE</span><span>SOMETHING <i>MOVE.</i></span><b><Arrow diagonal /></b></a>
           <footer className="footer section-pad">
             <div className="footer-brand"><span className="brand-orb" /><strong>ORBIT®</strong></div>
             <div><span>BUDAPEST, HU</span><span>AVAILABLE WORLDWIDE</span></div>
@@ -274,8 +319,8 @@ function App() {
       </main>
       {selectedProject && <div className="case-modal" role="dialog" aria-modal="true" aria-label={`${selectedProject.name} case study`}>
         <button className="case-close" onClick={() => setSelectedProject(null)}>CLOSE ×</button>
-        <div className={`case-hero ${selectedProject.tone}`}><span>CASE / {selectedProject.id} · {selectedProject.year}</span><h2>{selectedProject.name}</h2><strong>{selectedProject.impact}</strong></div>
-        <div className="case-body"><div className="case-meta"><span>STACK</span><b>{selectedProject.stack}</b><span>SCOPE</span><b>{selectedProject.scope}</b></div><section><span>01 / THE PROBLEM</span><p>{selectedProject.problem}</p></section><section><span>02 / THE RESPONSE</span><p>{selectedProject.solution}</p></section><section><span>03 / THE OUTCOME</span><p>{selectedProject.outcome}</p></section><button onClick={() => { const index = projects.indexOf(selectedProject); setSelectedProject(projects[(index + 1) % projects.length]); }}>NEXT CASE <Arrow /></button></div>
+        <div className={`case-hero ${selectedProject.tone} ${selectedProject.image ? '' : 'workflow-case'} ${selectedProject.demo ? 'lead-case' : ''}`} style={selectedProject.image ? { backgroundImage:`linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.55)), url(${selectedProject.image})` } : undefined}><span>{selectedProject.demo ? 'SOLUTION BLUEPRINT' : 'CLIENT PROJECT'} / {selectedProject.id} · {selectedProject.year}</span><h2>{selectedProject.name}</h2><strong>{selectedProject.impact}</strong></div>
+        <div className="case-body"><div className="case-meta"><span>CAPABILITIES</span><b>{selectedProject.stack}</b><span>SCOPE</span><b>{selectedProject.scope}</b></div><section><span>01 / THE CHALLENGE</span><p>{selectedProject.problem}</p></section><section><span>02 / OUR RESPONSE</span><p>{selectedProject.solution}</p></section><section><span>03 / THE RESULT</span><p>{selectedProject.outcome}</p></section><div className="case-actions">{selectedProject.name === 'EDA Solar' && <a className="case-live" href={selectedProject.url} target="_blank" rel="noreferrer">VISIT LIVE WEBSITE <Arrow diagonal /></a>}<button onClick={() => { const index = projects.indexOf(selectedProject); setSelectedProject(projects[(index + 1) % projects.length]); }}>NEXT CASE <Arrow /></button></div></div>
       </div>}
     </div>
   );
