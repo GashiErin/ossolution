@@ -1,15 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import fullTranslations from './translations.full.json';
+import logoMark from './assets/logo-mark.png';
+import imgEdaSolar from './assets/projects/eda-solar.webp';
+import imgNovatex from './assets/projects/novatex.webp';
+import imgSahgri from './assets/projects/sahgri.webp';
+import imgOratek from './assets/projects/oratek.webp';
 
 const translations = {
   DE: {
     ...fullTranslations.DE,
-    'Independent creative studio':'Unabhängiges Kreativstudio','Navigate / 2026':'Navigation / 2026','Work':'Projekte','Services':'Leistungen','Studio':'Studio','Contact':'Kontakt','WE MAKE':'WIR MACHEN','DIGITAL':'DIGITALES','FEEL ALIVE.':'SPÜRBAR.','EXPLORE':'PROJEKTE','OUR WORK':'ENTDECKEN','SCROLL TO DISCOVER':'WEITER SCROLLEN','SELECTED COLLABORATORS':'AUSGEWÄHLTE PARTNER','BUILT TO':'GEMACHT, UM','BE FELT.':'ZU WIRKEN.','VIEW ALL PROJECTS':'ALLE PROJEKTE','ONE STUDIO.':'EIN STUDIO.','NO SILOS.':'KEINE SILOS.','HOW WE WORK':'WIE WIR ARBEITEN','FOUR STAGES.':'VIER PHASEN.','NO THEATRE.':'KEIN THEATER.','Discover':'Entdecken','Define':'Definieren','Build':'Umsetzen','Launch & steward':'Start & Betreuung','HOW WE THINK':'WIE WIR DENKEN','THE STUDIO':'DAS STUDIO','BUILT DIFFERENT':'ANDERS AUFGEBAUT','SENIOR PEOPLE.':'ERFAHRENE MENSCHEN.','ZERO THEATRE.':'NULL THEATER.','CORE TEAM':'KERNTEAM','THE PEOPLE IN THE ROOM':'DIE MENSCHEN IM RAUM','MAKE THE WORK.':'MACHEN DIE ARBEIT.','EVERYDAY TOOLBOX':'UNSERE WERKZEUGE','IDEAS FIRST.':'IDEEN ZUERST.','TOOLS SECOND.':'WERKZEUGE DANACH.','THE USEFUL QUESTIONS.':'DIE WICHTIGEN FRAGEN.','GIVE US THE':'NENNEN SIE UNS DAS','REAL PROBLEM.':'ECHTE PROBLEM.','What are you planning?':'Was planen Sie?','Capabilities':'Kompetenzen','Timeline':'Zeitrahmen','Investment range':'Investitionsrahmen','Name':'Name','Company':'Unternehmen','Email':'E-Mail','Role':'Rolle','Tell us about it':'Erzählen Sie uns davon','PREPARE INQUIRY':'ANFRAGE VORBEREITEN','DIRECT CONTACT':'DIREKTER KONTAKT','DISCOVERY CALL':'ERSTGESPRÄCH','30 minutes.':'30 Minuten.','No pitch deck.':'Keine Präsentation.','REQUEST A CALL':'GESPRÄCH ANFRAGEN','CLIENT PROJECT':'KUNDENPROJEKT','SOLUTION BLUEPRINT':'LÖSUNGSKONZEPT','CAPABILITIES':'KOMPETENZEN','SCOPE':'UMFANG','THE CHALLENGE':'DIE HERAUSFORDERUNG','OUR RESPONSE':'UNSERE LÖSUNG','THE RESULT':'DAS ERGEBNIS','VISIT LIVE WEBSITE':'LIVE-WEBSITE ÖFFNEN','NEXT CASE':'NÄCHSTES PROJEKT','CLOSE':'SCHLIESSEN','BACK TO TOP':'NACH OBEN','This quarter':'Dieses Quartal','Next quarter':'Nächstes Quartal','This year':'Dieses Jahr','Just exploring':'Nur informieren','To be discussed':'Nach Absprache'
+    'Independent creative studio':'Unabhängiges Kreativstudio','Navigate / 2026':'Navigation / 2026','Work':'Projekte','Services':'Leistungen','Studio':'Studio','Contact':'Kontakt','WE MAKE':'WIR MACHEN','DIGITAL':'DIGITALES','FEEL ALIVE.':'SPÜRBAR.','EXPLORE':'PROJEKTE','OUR WORK':'ENTDECKEN','SCROLL TO DISCOVER':'WEITER SCROLLEN','BUILT TO':'GEMACHT, UM','BE FELT.':'ZU WIRKEN.','VIEW ALL PROJECTS':'ALLE PROJEKTE','ONE STUDIO.':'EIN STUDIO.','NO SILOS.':'KEINE SILOS.','HOW WE WORK':'WIE WIR ARBEITEN','FOUR STAGES.':'VIER PHASEN.','NO THEATRE.':'KEIN THEATER.','Discover':'Entdecken','Define':'Definieren','Build':'Umsetzen','Launch & steward':'Start & Betreuung','THE STUDIO':'DAS STUDIO','SENIOR PEOPLE.':'ERFAHRENE MENSCHEN.','ZERO THEATRE.':'NULL THEATER.','CORE TEAM':'KERNTEAM','THE USEFUL QUESTIONS.':'DIE WICHTIGEN FRAGEN.','GIVE US THE':'NENNEN SIE UNS DAS','REAL PROBLEM.':'ECHTE PROBLEM.','What are you planning?':'Was planen Sie?','Name':'Name','Email':'E-Mail','Tell us about it':'Erzählen Sie uns davon','PREPARE INQUIRY':'ANFRAGE VORBEREITEN','DIRECT CONTACT':'DIREKTER KONTAKT','DISCOVERY CALL':'ERSTGESPRÄCH','30 minutes.':'30 Minuten.','No pitch deck.':'Keine Präsentation.','REQUEST A CALL':'GESPRÄCH ANFRAGEN','CLIENT PROJECT':'KUNDENPROJEKT','SOLUTION BLUEPRINT':'LÖSUNGSKONZEPT','CAPABILITIES':'KOMPETENZEN','SCOPE':'UMFANG','THE CHALLENGE':'DIE HERAUSFORDERUNG','OUR RESPONSE':'UNSERE LÖSUNG','THE RESULT':'DAS ERGEBNIS','VISIT LIVE WEBSITE':'LIVE-WEBSITE ÖFFNEN','NEXT CASE':'NÄCHSTES PROJEKT','CLOSE':'SCHLIESSEN','BACK TO TOP':'NACH OBEN'
   },
   FR: {
     ...fullTranslations.FR,
-    'Independent creative studio':'Studio créatif indépendant','Navigate / 2026':'Navigation / 2026','Work':'Projets','Services':'Services','Studio':'Studio','Contact':'Contact','WE MAKE':'NOUS RENDONS','DIGITAL':'LE DIGITAL','FEEL ALIVE.':'VIVANT.','EXPLORE':'DÉCOUVREZ','OUR WORK':'NOS PROJETS','SCROLL TO DISCOVER':'FAITES DÉFILER','SELECTED COLLABORATORS':'COLLABORATEURS SÉLECTIONNÉS','BUILT TO':'CONÇU POUR','BE FELT.':'ÊTRE RESSENTI.','VIEW ALL PROJECTS':'VOIR TOUS LES PROJETS','ONE STUDIO.':'UN STUDIO.','NO SILOS.':'SANS SILOS.','HOW WE WORK':'NOTRE MÉTHODE','FOUR STAGES.':'QUATRE ÉTAPES.','NO THEATRE.':'SANS CINÉMA.','Discover':'Découvrir','Define':'Définir','Build':'Construire','Launch & steward':'Lancer & accompagner','HOW WE THINK':'NOTRE VISION','THE STUDIO':'LE STUDIO','BUILT DIFFERENT':'CONSTRUIT AUTREMENT','SENIOR PEOPLE.':'DES EXPERTS.','ZERO THEATRE.':'SANS CINÉMA.','CORE TEAM':'ÉQUIPE PRINCIPALE','THE PEOPLE IN THE ROOM':'LES PERSONNES PRÉSENTES','MAKE THE WORK.':'FONT LE TRAVAIL.','EVERYDAY TOOLBOX':'NOS OUTILS','IDEAS FIRST.':'LES IDÉES D’ABORD.','TOOLS SECOND.':'LES OUTILS ENSUITE.','THE USEFUL QUESTIONS.':'LES BONNES QUESTIONS.','GIVE US THE':'PARLEZ-NOUS DU','REAL PROBLEM.':'VRAI PROBLÈME.','What are you planning?':'Que prévoyez-vous ?','Capabilities':'Compétences','Timeline':'Calendrier','Investment range':'Budget envisagé','Name':'Nom','Company':'Entreprise','Email':'E-mail','Role':'Fonction','Tell us about it':'Parlez-nous du projet','PREPARE INQUIRY':'PRÉPARER LA DEMANDE','DIRECT CONTACT':'CONTACT DIRECT','DISCOVERY CALL':'APPEL DÉCOUVERTE','30 minutes.':'30 minutes.','No pitch deck.':'Sans présentation.','REQUEST A CALL':'DEMANDER UN APPEL','CLIENT PROJECT':'PROJET CLIENT','SOLUTION BLUEPRINT':'CONCEPT DE SOLUTION','CAPABILITIES':'COMPÉTENCES','SCOPE':'PÉRIMÈTRE','THE CHALLENGE':'LE DÉFI','OUR RESPONSE':'NOTRE RÉPONSE','THE RESULT':'LE RÉSULTAT','VISIT LIVE WEBSITE':'VISITER LE SITE','NEXT CASE':'PROJET SUIVANT','CLOSE':'FERMER','BACK TO TOP':'RETOUR EN HAUT','This quarter':'Ce trimestre','Next quarter':'Trimestre prochain','This year':'Cette année','Just exploring':'Je me renseigne','To be discussed':'À discuter'
+    'Independent creative studio':'Studio créatif indépendant','Navigate / 2026':'Navigation / 2026','Work':'Projets','Services':'Services','Studio':'Studio','Contact':'Contact','WE MAKE':'NOUS RENDONS','DIGITAL':'LE DIGITAL','FEEL ALIVE.':'VIVANT.','EXPLORE':'DÉCOUVREZ','OUR WORK':'NOS PROJETS','SCROLL TO DISCOVER':'FAITES DÉFILER','BUILT TO':'CONÇU POUR','BE FELT.':'ÊTRE RESSENTI.','VIEW ALL PROJECTS':'VOIR TOUS LES PROJETS','ONE STUDIO.':'UN STUDIO.','NO SILOS.':'SANS SILOS.','HOW WE WORK':'NOTRE MÉTHODE','FOUR STAGES.':'QUATRE ÉTAPES.','NO THEATRE.':'SANS CINÉMA.','Discover':'Découvrir','Define':'Définir','Build':'Construire','Launch & steward':'Lancer & accompagner','THE STUDIO':'LE STUDIO','SENIOR PEOPLE.':'DES EXPERTS.','ZERO THEATRE.':'SANS CINÉMA.','CORE TEAM':'ÉQUIPE PRINCIPALE','THE USEFUL QUESTIONS.':'LES BONNES QUESTIONS.','GIVE US THE':'PARLEZ-NOUS DU','REAL PROBLEM.':'VRAI PROBLÈME.','What are you planning?':'Que prévoyez-vous ?','Name':'Nom','Email':'E-mail','Tell us about it':'Parlez-nous du projet','PREPARE INQUIRY':'PRÉPARER LA DEMANDE','DIRECT CONTACT':'CONTACT DIRECT','DISCOVERY CALL':'APPEL DÉCOUVERTE','30 minutes.':'30 minutes.','No pitch deck.':'Sans présentation.','REQUEST A CALL':'DEMANDER UN APPEL','CLIENT PROJECT':'PROJET CLIENT','SOLUTION BLUEPRINT':'CONCEPT DE SOLUTION','CAPABILITIES':'COMPÉTENCES','SCOPE':'PÉRIMÈTRE','THE CHALLENGE':'LE DÉFI','OUR RESPONSE':'NOTRE RÉPONSE','THE RESULT':'LE RÉSULTAT','VISIT LIVE WEBSITE':'VISITER LE SITE','NEXT CASE':'PROJET SUIVANT','CLOSE':'FERMER','BACK TO TOP':'RETOUR EN HAUT'
   }
 };
 
@@ -17,21 +22,21 @@ const originalText = new WeakMap();
 const originalAttributes = new WeakMap();
 
 const projects = [
-  { id:'01', name:'EDA Solar', type:'RENEWABLE ENERGY / WEB', tone:'acid', mark:'EDA\nSOLAR', image:'/projects/eda-solar.webp', year:'LIVE', impact:'Solar energy, made easier to understand', stack:'UX / UI · Development · Content', scope:'Website · Solutions · Lead journey', url:'https://www.eda-ks.com/', problem:'EDA Solar needed one clear digital home for a broad offer spanning on-grid, off-grid and hybrid solar systems, battery storage and EV charging.', solution:'We designed and developed a structured company website that guides households and businesses from the right energy solution through consultation, planning, installation and activation.', outcome:'A live bilingual platform that brings EDA’s solutions, process and contact path together in one accessible experience.' },
-  { id:'02', name:'Novatex', type:'MANUFACTURING / PRODUCT CATALOG', tone:'coral', mark:'NOVA\nTEX', image:'/projects/novatex.webp', year:'LIVE', impact:'Technical products with a clearer commercial story', stack:'UX / UI · Development · Catalog', scope:'Website · Product system · Enquiries', url:'https://www.novatex-ks.com/', problem:'Novatex manufactures fiberglass mesh in numerous weights and grid specifications, so buyers need technical clarity without losing the company story and service offer.', solution:'We designed and developed a focused product website that organizes specifications, custom production, delivery, quality assurance and consulting into a straightforward buyer journey.', outcome:'A live company and product platform that gives European and regional customers a direct route from product comparison to enquiry.' },
-  { id:'03', name:'Sahgri SARL', type:'CONSTRUCTION / CORPORATE WEB', tone:'orange', mark:'SAHGRI\nSARL', image:'/projects/sahgri.webp', year:'LIVE', impact:'Craft, consultancy and references in one place', stack:'UX / UI · Development · Content', scope:'Website · Services · Project archive', url:'https://sahgri.ch/', problem:'Sahgri’s work covers plastering, painting, consulting, suspended ceilings and acoustic solutions, backed by substantial Swiss reference projects that needed room to speak.', solution:'We designed and developed a service-led website that separates each expertise, presents reference work and makes quotation and contact information easy to reach.', outcome:'A live business platform connecting Sahgri’s specialist capabilities, completed projects and enquiry flow for clients across French-speaking Switzerland.' },
-  { id:'04', name:'ORA-TEK Engineering', type:'PRECISION ENGINEERING / WEB', tone:'blue', mark:'ORA—TEK', image:'/projects/oratek.webp', year:'LIVE', impact:'Precision manufacturing presented with precision', stack:'UX / UI · Development · Multilingual', scope:'Website · Expertise · Machine park', url:'https://ora-tek-engineering.com/', problem:'ORA-TEK combines CNC manufacturing, engineering, industrial project leadership and training—a technical offer that must establish capability and trust quickly.', solution:'We designed and developed a multilingual website around its FANUC machine park, precision-mechanics expertise, quality commitment and direct access to the engineering team.', outcome:'A live four-language platform that presents the company’s capabilities and equipment to both regional and Swiss industrial audiences.' },
+  { id:'01', name:'EDA Solar', type:'RENEWABLE ENERGY / WEB', tone:'acid', mark:'EDA\nSOLAR', image:imgEdaSolar, year:'LIVE', impact:'Solar energy, made easier to understand', stack:'UX / UI · Development · Content', scope:'Website · Solutions · Lead journey', url:'https://www.eda-ks.com/', problem:'EDA Solar needed one clear digital home for a broad offer spanning on-grid, off-grid and hybrid solar systems, battery storage and EV charging.', solution:'We designed and developed a structured company website that guides households and businesses from the right energy solution through consultation, planning, installation and activation.', outcome:'A live bilingual platform that brings EDA’s solutions, process and contact path together in one accessible experience.' },
+  { id:'02', name:'Novatex', type:'MANUFACTURING / PRODUCT CATALOG', tone:'coral', mark:'NOVA\nTEX', image:imgNovatex, year:'LIVE', impact:'Technical products with a clearer commercial story', stack:'UX / UI · Development · Catalog', scope:'Website · Product system · Enquiries', url:'https://www.novatex-ks.com/', problem:'Novatex manufactures fiberglass mesh in numerous weights and grid specifications, so buyers need technical clarity without losing the company story and service offer.', solution:'We designed and developed a focused product website that organizes specifications, custom production, delivery, quality assurance and consulting into a straightforward buyer journey.', outcome:'A live company and product platform that gives European and regional customers a direct route from product comparison to enquiry.' },
+  { id:'03', name:'Sahgri SARL', type:'CONSTRUCTION / CORPORATE WEB', tone:'orange', mark:'SAHGRI\nSARL', image:imgSahgri, year:'LIVE', impact:'Craft, consultancy and references in one place', stack:'UX / UI · Development · Content', scope:'Website · Services · Project archive', url:'https://sahgri.ch/', problem:'Sahgri’s work covers plastering, painting, consulting, suspended ceilings and acoustic solutions, backed by substantial Swiss reference projects that needed room to speak.', solution:'We designed and developed a service-led website that separates each expertise, presents reference work and makes quotation and contact information easy to reach.', outcome:'A live business platform connecting Sahgri’s specialist capabilities, completed projects and enquiry flow for clients across French-speaking Switzerland.' },
+  { id:'04', name:'ORA-TEK Engineering', type:'PRECISION ENGINEERING / WEB', tone:'blue', mark:'ORA—TEK', image:imgOratek, year:'LIVE', impact:'Precision manufacturing presented with precision', stack:'UX / UI · Development · Multilingual', scope:'Website · Expertise · Machine park', url:'https://ora-tek-engineering.com/', problem:'ORA-TEK combines CNC manufacturing, engineering, industrial project leadership and training—a technical offer that must establish capability and trust quickly.', solution:'We designed and developed a multilingual website around its FANUC machine park, precision-mechanics expertise, quality commitment and direct access to the engineering team.', outcome:'A live four-language platform that presents the company’s capabilities and equipment to both regional and Swiss industrial audiences.' },
   { id:'05', name:'Editor Operations', type:'CUSTOM BACKEND / AUTOMATION', tone:'violet', mark:'EDITOR\nFLOW', year:'LIVE', impact:'One upload. Every system stays in sync.', stack:'Custom backend · APIs · Automation', scope:'Frame.io · Airtable · monday.com · Slack', problem:'A media company’s editors were repeating the same administrative work across four tools after every video upload, creating delays, inconsistent records and missed production updates.', solution:'We built a custom event-driven backend that receives new Frame.io uploads, saves structured video data in Airtable, creates and updates production items in monday.com, and sends the right Slack notifications automatically.', outcome:'Editors can stay focused on the work while a reliable backend moves project data, status and notifications through the production workflow. The client remains confidential, so identifying information is intentionally omitted.' },
   { id:'06', name:'Lead Response Engine', type:'CUSTOM AUTOMATION / BLUEPRINT', tone:'acid', mark:'LEAD\nENGINE', year:'READY', impact:'From new enquiry to qualified opportunity', stack:'Custom backend · CRM · Notifications', scope:'Lead capture · Qualification · Follow-up', demo:true, problem:'Service businesses lose valuable leads when enquiries sit in an inbox, qualification is inconsistent and follow-up depends on someone manually copying information between tools.', solution:'We shaped a custom-code workflow that validates each enquiry, enriches the company record, scores fit against agreed rules, updates the CRM, alerts the right owner and prepares a personalized follow-up task.', outcome:'A reusable automation blueprint that can be adapted to a client’s existing forms, CRM, email and internal tools—without adding another fragile chain of per-task automation subscriptions.' },
 ];
 
 const services = [
-  { n: '01', title: 'Brand systems', text: 'Distinct identities built to move, stretch and remain unmistakable across every digital surface.', tags: ['Strategy', 'Identity', 'Art direction', 'Campaigns'] },
-  { n: '02', title: 'Digital experiences', text: 'High-performance websites and products where interaction, narrative and utility work as one system.', tags: ['UX / UI', 'Development', 'WebGL', 'Creative code'] },
-  { n: '03', title: 'Motion worlds', text: 'Motion languages that give brands a pulse—from tiny interface gestures to cinematic launch films.', tags: ['Motion systems', '3D', 'Film', 'Prototyping'] },
-  { n: '04', title: 'Custom automation', text: 'We replace expensive Zapier, Make and n8n workflows with maintainable custom code. For suitable workloads, this can reduce recurring automation costs by up to 70%.', tags: ['API integrations', 'Custom backends', 'Queues', 'Monitoring'] },
-  { n: '05', title: 'Security & pentesting', text: 'Authorized security testing that finds exploitable weaknesses, explains the real business risk and helps your team fix them responsibly.', tags: ['Web pentesting', 'API security', 'Hardening', 'Remediation'] },
-  { n: '06', title: 'Web & mobile products', text: 'Websites, internal platforms and mobile apps designed around the exact job your team or customers need to complete.', tags: ['Websites', 'Mobile apps', 'React', 'Platforms'] },
+  { n: '01', title: 'Custom automation', text: 'We replace expensive Zapier, Make and n8n workflows with maintainable custom code—up to 70% lower recurring costs.', tags: ['API integrations', 'Custom backends', 'Monitoring'] },
+  { n: '02', title: 'Web & mobile products', text: 'Websites, internal platforms and mobile apps designed around the exact job your team or customers need to complete.', tags: ['Websites', 'Mobile apps', 'React'] },
+  { n: '03', title: 'Security & pentesting', text: 'Authorized security testing that finds exploitable weaknesses and helps your team fix them responsibly.', tags: ['Web pentesting', 'API security', 'Hardening'] },
+  { n: '04', title: 'Digital experiences', text: 'High-performance websites where interaction, narrative and utility work as one system.', tags: ['UX / UI', 'Development', 'Creative code'] },
+  { n: '05', title: 'Brand systems', text: 'Distinct identities built to stay unmistakable across every digital surface.', tags: ['Strategy', 'Identity', 'Art direction'] },
+  { n: '06', title: 'Motion & 3D', text: 'Motion languages that give brands a pulse—from interface gestures to launch films.', tags: ['Motion systems', '3D', 'Prototyping'] },
 ];
 
 const process = [
@@ -49,7 +54,7 @@ const team = [
 ];
 
 const faqs = [
-  ['What kind of projects fit Orbit?', 'New digital products, complex platform redesigns, brand-and-web engagements and focused interactive experiences where design and engineering need to stay connected.'],
+  ['What kind of projects fit Ossolut?', 'New digital products, complex platform redesigns, brand-and-web engagements and focused interactive experiences where design and engineering need to stay connected.'],
   ['Can you work with an existing codebase?', 'Yes. We begin with a short paid audit to understand architecture, quality, risk and whether taking ownership is responsible for both sides.'],
   ['Do you sign NDAs?', 'Yes. We can review your NDA before discovery, or provide a mutual NDA when sensitive product, customer or technical information is involved.'],
   ['Who owns the final work?', 'Once agreed invoices are paid, you own the project-specific deliverables. Reusable internal tooling and third-party software remain governed by their respective terms.'],
@@ -57,31 +62,110 @@ const faqs = [
   ['What happens after launch?', 'We offer structured stabilization and ongoing stewardship. Documentation, monitoring and knowledge transfer are planned deliverables, not afterthoughts.'],
 ];
 
-const testimonials = [
-  { quote: 'The person shaping the direction should stay close enough to the work to remain accountable for every important decision.', name: 'Erin Gashi', role: 'Creative Technology' },
-  { quote: 'A memorable interface still has to be a dependable system. Expression and engineering discipline belong in the same room.', name: 'Euron Osmani', role: 'Engineering' },
-  { quote: 'Motion earns its place when it explains hierarchy, state or character. If it only delays the user, it is decoration.', name: 'Art Sahiti', role: 'Motion & 3D' },
-];
-
 function Arrow({ diagonal = false }) {
   return <span className={diagonal ? 'arrow diagonal' : 'arrow'} aria-hidden="true">→</span>;
+}
+
+/**
+ * Interactive "math grid" background: graph-paper lines drawn on a canvas.
+ * The grid bulges away from the pointer and breathes with a slow idle wave.
+ */
+function GridField() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const wrap = canvas.parentElement;
+    const ctx = canvas.getContext('2d');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const SPACING = 46;   // grid cell size (px)
+    const RADIUS = 130;   // pointer influence radius
+    const FORCE = 30;     // max displacement (px)
+    let width = 0, height = 0, raf = 0;
+    const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999 };
+
+    const resize = () => {
+      const rect = wrap.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = rect.width; height = rect.height;
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (reduced) draw(0);
+    };
+
+    const warp = (x, y, t) => {
+      const dx = x - pointer.x, dy = y - pointer.y;
+      const fall = Math.exp(-(dx * dx + dy * dy) / (RADIUS * RADIUS));
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      const wave = reduced ? 0 : Math.sin(t / 1600 + x / 90 + y / 140) * 2;
+      return [x + (dx / len) * FORCE * fall, y + (dy / len) * FORCE * fall + wave];
+    };
+
+    const draw = (t) => {
+      pointer.x += (pointer.tx - pointer.x) * 0.12;
+      pointer.y += (pointer.ty - pointer.y) * 0.12;
+      ctx.clearRect(0, 0, width, height);
+      ctx.strokeStyle = 'rgba(11,23,48,.10)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= width + SPACING; x += SPACING) {
+        ctx.beginPath();
+        for (let y = 0; y <= height + SPACING; y += SPACING / 2) {
+          const [wx, wy] = warp(x, y, t);
+          if (y === 0) ctx.moveTo(wx, wy); else ctx.lineTo(wx, wy);
+        }
+        ctx.stroke();
+      }
+      for (let y = 0; y <= height + SPACING; y += SPACING) {
+        ctx.beginPath();
+        for (let x = 0; x <= width + SPACING; x += SPACING / 2) {
+          const [wx, wy] = warp(x, y, t);
+          if (x === 0) ctx.moveTo(wx, wy); else ctx.lineTo(wx, wy);
+        }
+        ctx.stroke();
+      }
+    };
+
+    const loop = (t) => { draw(t); raf = requestAnimationFrame(loop); };
+    const onMove = (e) => {
+      const rect = wrap.getBoundingClientRect();
+      pointer.tx = e.clientX - rect.left;
+      pointer.ty = e.clientY - rect.top;
+    };
+    const onLeave = () => { pointer.tx = -9999; pointer.ty = -9999; };
+
+    resize();
+    window.addEventListener('resize', resize);
+    if (reduced) {
+      draw(0);
+    } else {
+      wrap.addEventListener('pointermove', onMove);
+      wrap.addEventListener('pointerleave', onLeave);
+      raf = requestAnimationFrame(loop);
+    }
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+      wrap.removeEventListener('pointermove', onMove);
+      wrap.removeEventListener('pointerleave', onLeave);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="grid-field" aria-hidden="true" />;
 }
 
 function App() {
   const [language, setLanguage] = useState('EN');
   const [menuOpen, setMenuOpen] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [testimonial, setTestimonial] = useState(0);
   const [selectedProject, setSelectedProject] = useState(null);
   const [faqOpen, setFaqOpen] = useState(0);
   const [formStatus, setFormStatus] = useState('idle');
-  const [formData, setFormData] = useState({ type:'New digital product', capabilities:[], timeline:'This quarter', budget:'To be discussed', name:'', company:'', email:'', role:'', brief:'' });
+  const [formData, setFormData] = useState({ type:'New digital product', name:'', email:'', brief:'' });
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoaded(true), 900);
     const onKey = (event) => event.key === 'Escape' && setMenuOpen(false);
     window.addEventListener('keydown', onKey);
-    return () => { clearTimeout(timer); window.removeEventListener('keydown', onKey); };
+    return () => window.removeEventListener('keydown', onKey);
   }, []);
 
   useEffect(() => {
@@ -116,33 +200,48 @@ function App() {
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen, selectedProject]);
 
-  const nextTestimonial = (direction) => {
-    setTestimonial((testimonial + direction + testimonials.length) % testimonials.length);
-  };
+  // Reveal-on-scroll: elements fade/rise in as they enter the viewport.
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const targets = document.querySelectorAll(
+      '.section-heading, .project-card, .service, .process-grid article, .manifesto p, .team-grid article, .faq-list article, .inquiry-head, .direct-contact > div'
+    );
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -50px 0px' }
+    );
+    targets.forEach((target, index) => {
+      target.classList.add('reveal');
+      target.style.transitionDelay = `${(index % 3) * 70}ms`;
+      observer.observe(target);
+    });
+    return () => observer.disconnect();
+  }, []);
 
   const setField = (key, value) => setFormData(current => ({ ...current, [key]: value }));
-  const toggleCapability = (capability) => setFormData(current => ({ ...current, capabilities: current.capabilities.includes(capability) ? current.capabilities.filter(item => item !== capability) : [...current.capabilities, capability] }));
   const requestCall = () => { setField('type', 'Discovery call'); document.querySelector('#inquiry')?.scrollIntoView({ behavior:'smooth' }); };
   const submitInquiry = (event) => {
     event.preventDefault();
     if (!formData.name.trim() || !/^\S+@\S+\.\S+$/.test(formData.email) || !formData.brief.trim()) { setFormStatus('invalid'); return; }
     const subject = encodeURIComponent(`Project inquiry from ${formData.name}`);
-    const body = encodeURIComponent(`Name: ${formData.name}\nCompany: ${formData.company}\nRole: ${formData.role}\nProject: ${formData.type}\nCapabilities: ${formData.capabilities.join(', ') || 'Not selected'}\nTimeline: ${formData.timeline}\nBudget: ${formData.budget}\n\nBrief:\n${formData.brief}`);
+    const body = encodeURIComponent(`Name: ${formData.name}\nProject: ${formData.type}\n\nBrief:\n${formData.brief}`);
     setFormStatus('ready');
-    window.location.href = `mailto:contact@ossolution.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:contact@ossolut.com?subject=${subject}&body=${body}`;
   };
 
   return (
-    <div className={`site ${loaded ? 'is-loaded' : ''}`}>
-      <div className="loader" aria-hidden="true">
-        <div className="loader-mark">OS<span>®</span></div>
-        <div className="loader-line"><i /></div>
-      </div>
-
+    <div className="site">
       <header className="header">
-        <a className="brand" href="#top" aria-label="Orbit Studio home">
-          <span className="brand-orb" />
-          <strong>ORBIT®</strong>
+        <a className="brand" href="#top" aria-label="Ossolut home">
+          <img className="brand-logo" src={logoMark} alt="" />
+          <strong>OSSOLUT</strong>
         </a>
         <div className="header-status"><i /> Independent creative studio</div>
         <div className="language-switcher" aria-label="Language selector">
@@ -161,69 +260,62 @@ function App() {
             <small>0{index + 1}</small><span>{item}</span><Arrow diagonal />
           </a>
         ))}
-        <div className="menu-bottom"><span>Budapest / Worldwide</span><span>contact@ossolution.com</span></div>
+        <div className="menu-bottom"><span>Budapest / Worldwide</span><span>contact@ossolut.com</span></div>
       </nav>
 
       <main id="top">
         <section className="hero section-pad">
-          <div className="eyebrow hero-eyebrow"><span>( ORBIT CREATIVE STUDIO )</span><span>EST. 2026 / HU</span></div>
-          <h1>
-            <span className="hero-line">WE MAKE</span>
-            <span className="hero-line offset"><i className="hero-disc"><span /></i> DIGITAL</span>
-            <span className="hero-line end">FEEL ALIVE.</span>
-          </h1>
-          <div className="hero-bottom">
+          <GridField />
+          <div className="eyebrow hero-eyebrow"><span>( OSSOLUT STUDIO )</span><span>EST. 2026 / HU</span></div>
+          <div className="hero-core">
+            <img className="hero-logo" src={logoMark} alt="Ossolut logo" />
+            <h1>
+              <span className="hero-line">WE MAKE</span>
+              <span className="hero-line">DIGITAL</span>
+              <span className="hero-line">FEEL ALIVE.</span>
+            </h1>
             <p>We build expressive identities and digital experiences for ambitious technology brands.</p>
-            <a className="round-link" href="#work"><span>EXPLORE<br />OUR WORK</span><Arrow diagonal /></a>
-            <span className="scroll-note">SCROLL TO DISCOVER <b>↓</b></span>
+            <a className="hero-cta" href="#work">EXPLORE OUR WORK <Arrow diagonal /></a>
           </div>
-          <div className="hero-ticker"><div>STRATEGY ✦ DESIGN ✦ MOTION ✦ DEVELOPMENT ✦ STRATEGY ✦ DESIGN ✦ MOTION ✦ DEVELOPMENT ✦</div></div>
-        </section>
-
-        <section className="clients section-pad">
-          <div className="eyebrow"><span>( TRUSTED BY THE RESTLESS )</span><span>SELECTED COLLABORATORS</span></div>
-          <div className="client-grid">
-            {['ATLAS', 'NEURAL', 'ARKT', 'MONO', 'NORTH/01', 'KOVA', 'PARALLAX', 'VANTA'].map((client, index) => (
-              <span key={client} className={`client client-${index}`}>{client}</span>
-            ))}
-          </div>
+          <div className="hero-foot"><span className="scroll-note">SCROLL TO DISCOVER ↓</span></div>
         </section>
 
         <section className="work section-pad" id="work">
           <div className="section-heading">
-            <div><span className="eyebrow-label">( SELECTED WORK / LIVE PROJECTS + BLUEPRINTS )</span><h2>BUILT TO<br />BE FELT.</h2></div>
+            <div><span className="eyebrow-label">( SELECTED WORK )</span><h2>BUILT TO<br />BE FELT.</h2></div>
             <p>Live client platforms and solution blueprints across energy, manufacturing, construction, precision engineering and custom automation.</p>
           </div>
           <div className="project-grid">
-            {projects.map((project, index) => (
-              <article className={`project-card ${index % 3 === 1 ? 'tall' : ''}`} key={project.name}>
+            {projects.map((project) => (
+              <article className="project-card" key={project.name}>
                 <div className={`project-visual ${project.tone}`}>
                   {project.image ? <img src={project.image} alt={`${project.name} campaign artwork`} loading="lazy" /> : <div className={`workflow-art ${project.demo ? 'lead-art' : ''}`} aria-hidden="true" />}
                   <div className="visual-grid" />
                   <span className="project-mark">{project.mark.split('\n').map((line) => <span key={line}>{line}</span>)}</span>
                   <span className="project-index">({project.id})</span>
-                  <div className="project-orbit"><i /><i /><i /></div>
                 </div>
                 <div className="project-meta"><h3>{project.name}</h3><span>{project.type}</span><button onClick={() => setSelectedProject(project)} aria-label={`View ${project.name} case study`}><Arrow diagonal /></button></div>
               </article>
             ))}
           </div>
-          <a className="big-link" href="#contact"><span>VIEW ALL PROJECTS</span><Arrow diagonal /></a>
         </section>
 
         <section className="services" id="services">
-          <div className="services-intro section-pad">
-            <span className="eyebrow-label">( SERVICES / EXPERTISE )</span>
-            <div className="services-title"><h2>ONE STUDIO.<br /><em>NO SILOS.</em></h2><p>From the first strategic question to the last line of code, we keep disciplines together so the idea stays intact.</p></div>
-          </div>
-          <div className="service-list">
-            {services.map((service) => (
-              <article className="service" key={service.n}>
-                <span>{service.n}</span><h3>{service.title}</h3><p>{service.text}</p>
-                <div className="service-tags">{service.tags.map(tag => <small key={tag}>{tag}</small>)}</div>
-                <div className="service-icon"><span /><span /></div>
-              </article>
-            ))}
+          <div className="section-pad">
+            <div className="section-heading">
+              <div><span className="eyebrow-label">( SERVICES / EXPERTISE )</span><h2>ONE STUDIO.<br /><em>NO SILOS.</em></h2></div>
+              <p>From the first strategic question to the last line of code, we keep disciplines together so the idea stays intact.</p>
+            </div>
+            <div className="service-grid">
+              {services.map((service) => (
+                <article className="service" key={service.n}>
+                  <span>{service.n}</span>
+                  <h3>{service.title}</h3>
+                  <p>{service.text}</p>
+                  <div className="service-tags">{service.tags.map(tag => <small key={tag}>{tag}</small>)}</div>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -235,53 +327,17 @@ function App() {
         </section>
 
         <section className="manifesto section-pad">
-          <div className="manifesto-side"><span>( HOW WE THINK )</span><div className="rotator">ORBIT<br />ORBIT<br />ORBIT</div></div>
-          <div className="manifesto-copy">
-            <p>Most digital work is designed to be understood.</p>
-            <p className="muted">We design it to be remembered.</p>
-            <p>Clear thinking, unusual execution and motion with purpose—not decoration.</p>
-          </div>
+          <p>Most digital work is designed to be understood.</p>
+          <p className="muted">We design it to be remembered.</p>
         </section>
 
         <section className="studio section-pad" id="studio">
-          <div className="eyebrow"><span>( THE STUDIO )</span><span>SMALL BY DESIGN / GLOBAL BY DEFAULT</span></div>
-          <div className="stats">
-            <div><strong>04</strong><span>Named core team members</span></div>
-            <div><strong>06</strong><span>Connected disciplines</span></div>
-            <div><strong>01</strong><span>Integrated studio model</span></div>
+          <div className="section-heading">
+            <div><span className="eyebrow-label">( CORE TEAM )</span><h2>SENIOR PEOPLE.<br />ZERO THEATRE.</h2></div>
+            <p>Ossolut is an independent design and technology studio. The people in the room are the people making the work.</p>
           </div>
-          <div className="studio-story">
-            <div className="portrait" aria-label="Abstract studio portrait"><div className="portrait-head" /><div className="portrait-body" /><span>ORBIT / FOUNDING TEAM / 2026</span></div>
-            <div className="story-copy">
-              <span className="eyebrow-label">( BUILT DIFFERENT )</span>
-              <h2>SENIOR PEOPLE.<br />ZERO THEATRE.</h2>
-              <p>Orbit is an independent design and technology studio assembled around each challenge. The people in the room are the people making the work.</p>
-              <p>We partner with founders and teams who believe their digital presence should be as original as their ambition.</p>
-              <a href="#contact">More about our approach <Arrow diagonal /></a>
-            </div>
-          </div>
-          <div className="team-head"><span className="eyebrow-label">( CORE TEAM )</span><h2>THE PEOPLE IN THE ROOM<br />MAKE THE WORK.</h2></div>
           <div className="team-grid">
             {team.map(person => <article key={person.name}><div className="team-monogram">{person.initials}</div><span>{person.role}</span><h3>{person.name}</h3><p>{person.bio}</p><div>{person.skills.map(skill => <small key={skill}>{skill}</small>)}</div></article>)}
-          </div>
-        </section>
-
-        <section className="toolbox">
-          <div className="toolbox-title section-pad"><span>( EVERYDAY TOOLBOX )</span><h2>IDEAS FIRST.<br />TOOLS SECOND.</h2></div>
-          <div className="tool-row"><div>{['FIGMA', 'THREE.JS', 'GSAP', 'REACT', 'BLENDER', 'WEBGL', 'RIVE', 'TOUCH'].map(x => <span key={x}>{x}<i>✦</i></span>)}</div></div>
-        </section>
-
-        <section className="testimonials section-pad">
-          <div className="eyebrow"><span>( COLLABORATION PRINCIPLES )</span><span>{String(testimonial + 1).padStart(2, '0')} / 03</span></div>
-          <div className="quote-mark">“</div>
-          <blockquote>{testimonials[testimonial].quote}</blockquote>
-          <div className="quote-footer"><div><strong>{testimonials[testimonial].name}</strong><span>{testimonials[testimonial].role}</span></div><div><button onClick={() => nextTestimonial(-1)}>←</button><button onClick={() => nextTestimonial(1)}>→</button></div></div>
-        </section>
-
-        <section className="awards section-pad">
-          <div className="section-heading"><div><span className="eyebrow-label">( DELIVERY STANDARDS )</span><h2>WHAT GOOD<br />LOOKS LIKE.</h2></div><p>Benchmarks we design toward on every engagement—specific targets are agreed during discovery.</p></div>
-          <div className="award-list">
-            {[['ACCESSIBILITY', 'Keyboard, contrast and reduced motion', 'WCAG'], ['PERFORMANCE', 'Measured budgets for critical journeys', 'CWV'], ['DOCUMENTATION', 'Architecture decisions and operating guides', 'ADRs'], ['OWNERSHIP', 'Clear handover and post-launch stewardship', 'OPS']].map(row => <div key={row[0]}><strong>{row[0]}</strong><span>{row[1]}</span><time>{row[2]}</time><Arrow diagonal /></div>)}
           </div>
         </section>
 
@@ -291,29 +347,28 @@ function App() {
         </section>
 
         <section className="inquiry section-pad" id="inquiry">
-          <div className="inquiry-head"><span className="eyebrow-label">( PROJECT BRIEF / V1.0 )</span><h2>GIVE US THE<br /><em>REAL PROBLEM.</em></h2><p>Required: name, valid email and a short brief. Submitting prepares an email in your default mail application; connect your preferred form provider before production.</p></div>
+          <div className="inquiry-head"><span className="eyebrow-label">( PROJECT BRIEF )</span><h2>GIVE US THE<br /><em>REAL PROBLEM.</em></h2><p>Name, a valid email and a short brief. Submitting prepares an email in your default mail application.</p></div>
           <form onSubmit={submitInquiry} noValidate>
-            <fieldset><legend>01 / What are you planning?</legend><div className="choice-row">{['New digital product','Replatform / redesign','Brand + website','Interactive campaign','Audit & direction'].map(value => <button type="button" className={formData.type === value ? 'active' : ''} onClick={() => setField('type', value)} key={value}>{value}</button>)}</div></fieldset>
-            <fieldset><legend>02 / Capabilities</legend><div className="choice-row">{['Strategy','Brand','UX / UI','Engineering','AI systems','Motion / 3D'].map(value => <button type="button" className={formData.capabilities.includes(value) ? 'active' : ''} onClick={() => toggleCapability(value)} key={value}>{value}</button>)}</div></fieldset>
-            <div className="select-row"><label>03 / Timeline<select value={formData.timeline} onChange={e => setField('timeline', e.target.value)}><option>This quarter</option><option>Next quarter</option><option>This year</option><option>Just exploring</option></select></label><label>04 / Investment range<select value={formData.budget} onChange={e => setField('budget', e.target.value)}><option>To be discussed</option><option>€15k–€35k</option><option>€35k–€75k</option><option>€75k+</option><option>NDA before numbers</option></select></label></div>
-            <div className="input-grid"><label>Name *<input value={formData.name} onChange={e => setField('name', e.target.value)} placeholder="Your name" /></label><label>Company<input value={formData.company} onChange={e => setField('company', e.target.value)} placeholder="Company or product" /></label><label>Email *<input type="email" value={formData.email} onChange={e => setField('email', e.target.value)} placeholder="you@company.com" /></label><label>Role<input value={formData.role} onChange={e => setField('role', e.target.value)} placeholder="Your role" /></label></div>
+            <fieldset><legend>01 / What are you planning?</legend><div className="choice-row">{['New digital product','Replatform / redesign','Brand + website','Automation','Audit & direction'].map(value => <button type="button" className={formData.type === value ? 'active' : ''} onClick={() => setField('type', value)} key={value}>{value}</button>)}</div></fieldset>
+            <div className="input-grid"><label>Name *<input value={formData.name} onChange={e => setField('name', e.target.value)} placeholder="Your name" /></label><label>Email *<input type="email" value={formData.email} onChange={e => setField('email', e.target.value)} placeholder="you@company.com" /></label></div>
             <label className="brief-label">Tell us about it *<textarea value={formData.brief} onChange={e => setField('brief', e.target.value)} placeholder="What are you building, where is it stuck, and what should be true after we work together?" /></label>
-            <div className="form-foot"><div><span>RESPONSE / WITHIN TWO BUSINESS DAYS</span><span>NDA-FRIENDLY / YES</span><span>WORKING REGION / WORLDWIDE</span></div><button type="submit">PREPARE INQUIRY <Arrow diagonal /></button></div>
+            <div className="form-foot"><span>RESPONSE / WITHIN TWO BUSINESS DAYS</span><button type="submit">PREPARE INQUIRY <Arrow diagonal /></button></div>
             {formStatus === 'invalid' && <p className="form-message error" role="alert">Please add your name, a valid email address and a short project brief.</p>}
             {formStatus === 'ready' && <p className="form-message" role="status">Your email application should now be open with the project brief prepared.</p>}
           </form>
-          <aside className="direct-contact"><div><span>( DIRECT CONTACT )</span><a href="mailto:contact@ossolution.com">contact@ossolution.com</a><p>For an NDA, RFP or a quick fit check, contact our studio directly.</p></div><div><span>( DISCOVERY CALL )</span><h3>30 minutes.<br />No pitch deck.</h3><p>Request a focused call about the product, constraint and next useful decision.</p><button onClick={requestCall}>REQUEST A CALL <Arrow diagonal /></button></div></aside>
+          <aside className="direct-contact">
+            <div><span>( DIRECT CONTACT )</span><a href="mailto:contact@ossolut.com">contact@ossolut.com</a><p>For an NDA, RFP or a quick fit check, contact our studio directly.</p></div>
+            <div><span>( DISCOVERY CALL )</span><h3>30 minutes.<br />No pitch deck.</h3><button onClick={requestCall}>REQUEST A CALL <Arrow diagonal /></button></div>
+          </aside>
         </section>
 
         <section className="contact" id="contact">
-          <div className="contact-top section-pad"><span>( ENOUGH TALK )</span><a href="mailto:contact@ossolution.com">contact@ossolution.com</a></div>
-          <a className="contact-cta" href="mailto:contact@ossolution.com"><span>LET'S MAKE</span><span>SOMETHING <i>MOVE.</i></span><b><Arrow diagonal /></b></a>
+          <a className="contact-cta" href="mailto:contact@ossolut.com"><span>LET'S MAKE</span><span>SOMETHING <i>MOVE.</i></span><b><Arrow diagonal /></b></a>
           <footer className="footer section-pad">
-            <div className="footer-brand"><span className="brand-orb" /><strong>ORBIT®</strong></div>
+            <div className="footer-brand"><img className="brand-logo" src={logoMark} alt="" /><strong>OSSOLUT</strong></div>
             <div><span>BUDAPEST, HU</span><span>AVAILABLE WORLDWIDE</span></div>
-            <div><a href="#top">INSTAGRAM</a><a href="#top">LINKEDIN</a><a href="#top">BEHANCE</a></div>
-            <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>BACK TO TOP ↑</button>
-            <small>© 2026 ORBIT CREATIVE STUDIO</small>
+            <div><a href="mailto:contact@ossolut.com">CONTACT@OSSOLUT.COM</a><button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>BACK TO TOP ↑</button></div>
+            <small>© 2026 OSSOLUT</small>
           </footer>
         </section>
       </main>

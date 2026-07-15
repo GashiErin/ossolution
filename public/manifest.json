@@ -1,6 +1,6 @@
 {
-  "short_name": "Orbit Studio",
-  "name": "Orbit Creative Technology Studio",
+  "short_name": "Ossolut",
+  "name": "Ossolut — Design & Technology Studio",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#1d1c1a",
-  "background_color": "#f0efe9"
+  "theme_color": "#041023",
+  "background_color": "#f8f9f5"
 }
