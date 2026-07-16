@@ -24,15 +24,16 @@
 .menu-panel { position:fixed; z-index:40; inset:0; background:var(--ink-deep); color:var(--paper); display:flex; flex-direction:column; padding:100px var(--pad) 25px; transform:translateY(-105%); transition:transform .7s cubic-bezier(.77,0,.18,1); }
 .menu-panel.open { transform:none; }
 .menu-meta,.menu-bottom { font:11px 'DM Mono'; text-transform:uppercase; }
-.menu-panel>a { border-top:1px solid var(--line-dark); display:grid; grid-template-columns:56px 1fr auto; align-items:center; min-height:13vh; }
-.menu-panel>a span { font-size:clamp(1.7rem,3.4vw,3rem); font-weight:700; text-transform:uppercase; }
-.menu-panel>a .arrow { font-size:4vw; }
+.menu-panel>a { border-top:1px solid var(--line-dark); display:grid; grid-template-columns:44px 1fr auto; align-items:center; min-height:11vh; }
+.menu-panel>a small { font:10px 'DM Mono'; }
+.menu-panel>a span { font-size:clamp(1.3rem,2.3vw,2rem); font-weight:600; letter-spacing:-.01em; text-transform:uppercase; }
+.menu-panel>a .arrow { font-size:1.4rem; opacity:.5; }
 .menu-bottom { margin-top:auto; display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; border-top:1px solid var(--line-dark); padding-top:18px; }
 
 /* ── Hero (centered, interactive grid background) ───── */
 .hero { min-height:100svh; position:relative; background:var(--paper); color:var(--ink); padding-top:110px; padding-bottom:24px; display:flex; flex-direction:column; }
-.grid-field { position:absolute; inset:0; z-index:0; width:100%; height:100%; }
-.hero > :not(.grid-field) { position:relative; z-index:1; }
+.hero-canvas { position:absolute; inset:0; z-index:0; width:100%; height:100%; }
+.hero > :not(.hero-canvas) { position:relative; z-index:1; }
 .eyebrow { display:flex; justify-content:space-between; gap:10px; font:400 10px 'DM Mono'; text-transform:uppercase; letter-spacing:.08em; }
 .hero-core { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:26px; pointer-events:none; }
 .hero-core a { pointer-events:auto; }
@@ -251,7 +252,7 @@
   .case-hero h2 { font-size:11vw; }
   .footer { grid-template-columns:1fr; }
   .footer small { margin-top:18px; }
-  .menu-panel>a span { font-size:7vw; }
+  .menu-panel>a span { font-size:5.5vw; }
   .language-switcher { margin-left:0; }
 }
 @media (prefers-reduced-motion: reduce) {

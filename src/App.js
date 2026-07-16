@@ -26,8 +26,6 @@ const projects = [
   { id:'02', name:'Novatex', type:'MANUFACTURING / PRODUCT CATALOG', tone:'coral', mark:'NOVA\nTEX', image:imgNovatex, year:'LIVE', impact:'Technical products with a clearer commercial story', stack:'UX / UI · Development · Catalog', scope:'Website · Product system · Enquiries', url:'https://www.novatex-ks.com/', problem:'Novatex manufactures fiberglass mesh in numerous weights and grid specifications, so buyers need technical clarity without losing the company story and service offer.', solution:'We designed and developed a focused product website that organizes specifications, custom production, delivery, quality assurance and consulting into a straightforward buyer journey.', outcome:'A live company and product platform that gives European and regional customers a direct route from product comparison to enquiry.' },
   { id:'03', name:'Sahgri SARL', type:'CONSTRUCTION / CORPORATE WEB', tone:'orange', mark:'SAHGRI\nSARL', image:imgSahgri, year:'LIVE', impact:'Craft, consultancy and references in one place', stack:'UX / UI · Development · Content', scope:'Website · Services · Project archive', url:'https://sahgri.ch/', problem:'Sahgri’s work covers plastering, painting, consulting, suspended ceilings and acoustic solutions, backed by substantial Swiss reference projects that needed room to speak.', solution:'We designed and developed a service-led website that separates each expertise, presents reference work and makes quotation and contact information easy to reach.', outcome:'A live business platform connecting Sahgri’s specialist capabilities, completed projects and enquiry flow for clients across French-speaking Switzerland.' },
   { id:'04', name:'ORA-TEK Engineering', type:'PRECISION ENGINEERING / WEB', tone:'blue', mark:'ORA—TEK', image:imgOratek, year:'LIVE', impact:'Precision manufacturing presented with precision', stack:'UX / UI · Development · Multilingual', scope:'Website · Expertise · Machine park', url:'https://ora-tek-engineering.com/', problem:'ORA-TEK combines CNC manufacturing, engineering, industrial project leadership and training—a technical offer that must establish capability and trust quickly.', solution:'We designed and developed a multilingual website around its FANUC machine park, precision-mechanics expertise, quality commitment and direct access to the engineering team.', outcome:'A live four-language platform that presents the company’s capabilities and equipment to both regional and Swiss industrial audiences.' },
-  { id:'05', name:'Editor Operations', type:'CUSTOM BACKEND / AUTOMATION', tone:'violet', mark:'EDITOR\nFLOW', year:'LIVE', impact:'One upload. Every system stays in sync.', stack:'Custom backend · APIs · Automation', scope:'Frame.io · Airtable · monday.com · Slack', problem:'A media company’s editors were repeating the same administrative work across four tools after every video upload, creating delays, inconsistent records and missed production updates.', solution:'We built a custom event-driven backend that receives new Frame.io uploads, saves structured video data in Airtable, creates and updates production items in monday.com, and sends the right Slack notifications automatically.', outcome:'Editors can stay focused on the work while a reliable backend moves project data, status and notifications through the production workflow. The client remains confidential, so identifying information is intentionally omitted.' },
-  { id:'06', name:'Lead Response Engine', type:'CUSTOM AUTOMATION / BLUEPRINT', tone:'acid', mark:'LEAD\nENGINE', year:'READY', impact:'From new enquiry to qualified opportunity', stack:'Custom backend · CRM · Notifications', scope:'Lead capture · Qualification · Follow-up', demo:true, problem:'Service businesses lose valuable leads when enquiries sit in an inbox, qualification is inconsistent and follow-up depends on someone manually copying information between tools.', solution:'We shaped a custom-code workflow that validates each enquiry, enriches the company record, scores fit against agreed rules, updates the CRM, alerts the right owner and prepares a personalized follow-up task.', outcome:'A reusable automation blueprint that can be adapted to a client’s existing forms, CRM, email and internal tools—without adding another fragile chain of per-task automation subscriptions.' },
 ];
 
 const services = [
@@ -67,10 +65,10 @@ function Arrow({ diagonal = false }) {
 }
 
 /**
- * Interactive "math grid" background: graph-paper lines drawn on a canvas.
- * The grid bulges away from the pointer and breathes with a slow idle wave.
+ * Interactive particle field: navy specks that drift slowly, scatter away from
+ * the pointer and brighten as it passes. Pure canvas, brand-monochrome.
  */
-function GridField() {
+function ParticleField() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -78,11 +76,23 @@ function GridField() {
     const wrap = canvas.parentElement;
     const ctx = canvas.getContext('2d');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const SPACING = 46;   // grid cell size (px)
-    const RADIUS = 130;   // pointer influence radius
-    const FORCE = 30;     // max displacement (px)
+    const RADIUS = 140;   // pointer influence radius
+    const PUSH = 34;      // max scatter distance (px)
     let width = 0, height = 0, raf = 0;
+    let particles = [];
     const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999 };
+
+    const build = () => {
+      const count = Math.min(130, Math.round((width * height) / 11000));
+      particles = Array.from({ length: count }, () => ({
+        hx: Math.random() * width,
+        hy: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.16,
+        vy: (Math.random() - 0.5) * 0.16,
+        r: 1 + Math.random() * 1.8,
+        a: 0.18 + Math.random() * 0.32,
+      }));
+    };
 
     const resize = () => {
       const rect = wrap.getBoundingClientRect();
@@ -91,42 +101,33 @@ function GridField() {
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (reduced) draw(0);
+      build();
+      if (reduced) draw();
     };
 
-    const warp = (x, y, t) => {
-      const dx = x - pointer.x, dy = y - pointer.y;
-      const fall = Math.exp(-(dx * dx + dy * dy) / (RADIUS * RADIUS));
-      const len = Math.sqrt(dx * dx + dy * dy) || 1;
-      const wave = reduced ? 0 : Math.sin(t / 1600 + x / 90 + y / 140) * 2;
-      return [x + (dx / len) * FORCE * fall, y + (dy / len) * FORCE * fall + wave];
-    };
-
-    const draw = (t) => {
-      pointer.x += (pointer.tx - pointer.x) * 0.12;
-      pointer.y += (pointer.ty - pointer.y) * 0.12;
+    const draw = () => {
+      pointer.x += (pointer.tx - pointer.x) * 0.1;
+      pointer.y += (pointer.ty - pointer.y) * 0.1;
       ctx.clearRect(0, 0, width, height);
-      ctx.strokeStyle = 'rgba(11,23,48,.10)';
-      ctx.lineWidth = 1;
-      for (let x = 0; x <= width + SPACING; x += SPACING) {
-        ctx.beginPath();
-        for (let y = 0; y <= height + SPACING; y += SPACING / 2) {
-          const [wx, wy] = warp(x, y, t);
-          if (y === 0) ctx.moveTo(wx, wy); else ctx.lineTo(wx, wy);
+      for (const p of particles) {
+        if (!reduced) {
+          p.hx += p.vx; p.hy += p.vy;
+          if (p.hx < -20) p.hx = width + 20; else if (p.hx > width + 20) p.hx = -20;
+          if (p.hy < -20) p.hy = height + 20; else if (p.hy > height + 20) p.hy = -20;
         }
-        ctx.stroke();
-      }
-      for (let y = 0; y <= height + SPACING; y += SPACING) {
+        const dx = p.hx - pointer.x, dy = p.hy - pointer.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const force = Math.max(0, 1 - dist / RADIUS);
+        const ox = (dx / dist) * PUSH * force;
+        const oy = (dy / dist) * PUSH * force;
         ctx.beginPath();
-        for (let x = 0; x <= width + SPACING; x += SPACING / 2) {
-          const [wx, wy] = warp(x, y, t);
-          if (x === 0) ctx.moveTo(wx, wy); else ctx.lineTo(wx, wy);
-        }
-        ctx.stroke();
+        ctx.arc(p.hx + ox, p.hy + oy, p.r * (1 + force * 0.9), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(11,23,48,${Math.min(0.85, p.a * (1 + force * 2))})`;
+        ctx.fill();
       }
     };
 
-    const loop = (t) => { draw(t); raf = requestAnimationFrame(loop); };
+    const loop = () => { draw(); raf = requestAnimationFrame(loop); };
     const onMove = (e) => {
       const rect = wrap.getBoundingClientRect();
       pointer.tx = e.clientX - rect.left;
@@ -137,7 +138,7 @@ function GridField() {
     resize();
     window.addEventListener('resize', resize);
     if (reduced) {
-      draw(0);
+      draw();
     } else {
       wrap.addEventListener('pointermove', onMove);
       wrap.addEventListener('pointerleave', onLeave);
@@ -151,7 +152,7 @@ function GridField() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="grid-field" aria-hidden="true" />;
+  return <canvas ref={canvasRef} className="hero-canvas" aria-hidden="true" />;
 }
 
 function App() {
@@ -265,7 +266,7 @@ function App() {
 
       <main id="top">
         <section className="hero section-pad">
-          <GridField />
+          <ParticleField />
           <div className="eyebrow hero-eyebrow"><span>( OSSOLUT STUDIO )</span><span>EST. 2026 / HU</span></div>
           <div className="hero-core">
             <img className="hero-logo" src={logoMark} alt="Ossolut logo" />
@@ -289,7 +290,7 @@ function App() {
             {projects.map((project) => (
               <article className="project-card" key={project.name}>
                 <div className={`project-visual ${project.tone}`}>
-                  {project.image ? <img src={project.image} alt={`${project.name} campaign artwork`} loading="lazy" /> : <div className={`workflow-art ${project.demo ? 'lead-art' : ''}`} aria-hidden="true" />}
+                  <img src={project.image} alt={`${project.name} website preview`} loading="lazy" />
                   <div className="visual-grid" />
                   <span className="project-mark">{project.mark.split('\n').map((line) => <span key={line}>{line}</span>)}</span>
                   <span className="project-index">({project.id})</span>
@@ -374,8 +375,8 @@ function App() {
       </main>
       {selectedProject && <div className="case-modal" role="dialog" aria-modal="true" aria-label={`${selectedProject.name} case study`}>
         <button className="case-close" onClick={() => setSelectedProject(null)}>CLOSE ×</button>
-        <div className={`case-hero ${selectedProject.tone} ${selectedProject.image ? '' : 'workflow-case'} ${selectedProject.demo ? 'lead-case' : ''}`} style={selectedProject.image ? { backgroundImage:`linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.55)), url(${selectedProject.image})` } : undefined}><span>{selectedProject.demo ? 'SOLUTION BLUEPRINT' : 'CLIENT PROJECT'} / {selectedProject.id} · {selectedProject.year}</span><h2>{selectedProject.name}</h2><strong>{selectedProject.impact}</strong></div>
-        <div className="case-body"><div className="case-meta"><span>CAPABILITIES</span><b>{selectedProject.stack}</b><span>SCOPE</span><b>{selectedProject.scope}</b></div><section><span>01 / THE CHALLENGE</span><p>{selectedProject.problem}</p></section><section><span>02 / OUR RESPONSE</span><p>{selectedProject.solution}</p></section><section><span>03 / THE RESULT</span><p>{selectedProject.outcome}</p></section><div className="case-actions">{selectedProject.name === 'EDA Solar' && <a className="case-live" href={selectedProject.url} target="_blank" rel="noreferrer">VISIT LIVE WEBSITE <Arrow diagonal /></a>}<button onClick={() => { const index = projects.indexOf(selectedProject); setSelectedProject(projects[(index + 1) % projects.length]); }}>NEXT CASE <Arrow /></button></div></div>
+        <div className={`case-hero ${selectedProject.tone}`} style={{ backgroundImage:`linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.55)), url(${selectedProject.image})` }}><span>CLIENT PROJECT / {selectedProject.id} · {selectedProject.year}</span><h2>{selectedProject.name}</h2><strong>{selectedProject.impact}</strong></div>
+        <div className="case-body"><div className="case-meta"><span>CAPABILITIES</span><b>{selectedProject.stack}</b><span>SCOPE</span><b>{selectedProject.scope}</b></div><section><span>01 / THE CHALLENGE</span><p>{selectedProject.problem}</p></section><section><span>02 / OUR RESPONSE</span><p>{selectedProject.solution}</p></section><section><span>03 / THE RESULT</span><p>{selectedProject.outcome}</p></section><div className="case-actions">{selectedProject.url && <a className="case-live" href={selectedProject.url} target="_blank" rel="noreferrer">VISIT LIVE WEBSITE <Arrow diagonal /></a>}<button onClick={() => { const index = projects.indexOf(selectedProject); setSelectedProject(projects[(index + 1) % projects.length]); }}>NEXT CASE <Arrow /></button></div></div>
       </div>}
     </div>
   );
