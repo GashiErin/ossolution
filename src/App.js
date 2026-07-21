@@ -29,7 +29,9 @@ const translations = {
     'Builds workflow automations, AI integrations and scalable web applications — from API architecture to production.':'Entwickelt Workflow-Automatisierungen, KI-Integrationen und skalierbare Webanwendungen — von der API-Architektur bis zur Produktion.',
     'Focused on intelligent automation, custom integrations and the systems that streamline business processes.':'Fokussiert auf intelligente Automatisierung, individuelle Integrationen und Systeme, die Geschäftsprozesse verschlanken.',
     'Specializes in application security, secure system design and AI-powered security automation — integrating security across the development lifecycle.':'Spezialisiert auf Anwendungssicherheit, sicheres Systemdesign und KI-gestützte Security-Automatisierung — Sicherheit über den gesamten Entwicklungszyklus hinweg.',
-    'Builds full-stack systems, multi-agent platforms and RAG pipelines — from data science down to embedded hardware.':'Entwickelt Full-Stack-Systeme, Multi-Agent-Plattformen und RAG-Pipelines — von Data Science bis zu Embedded Hardware.'
+    'Builds full-stack systems, multi-agent platforms and RAG pipelines — from data science down to embedded hardware.':'Entwickelt Full-Stack-Systeme, Multi-Agent-Plattformen und RAG-Pipelines — von Data Science bis zu Embedded Hardware.',
+    'OPEN CASE':'PROJEKT ÖFFNEN','DRAG THE DECK — CLICK TO OPEN':'DECK ZIEHEN — KLICKEN ZUM ÖFFNEN',
+    'START A':'PROJEKT','PROJECT.':'STARTEN.'
   },
   FR: {
     ...fullTranslations.FR,
@@ -52,7 +54,9 @@ const translations = {
     'Builds workflow automations, AI integrations and scalable web applications — from API architecture to production.':'Conçoit des automatisations de workflows, des intégrations IA et des applications web évolutives — de l’architecture API à la production.',
     'Focused on intelligent automation, custom integrations and the systems that streamline business processes.':'Automatisation intelligente, intégrations personnalisées et systèmes qui fluidifient les processus métier.',
     'Specializes in application security, secure system design and AI-powered security automation — integrating security across the development lifecycle.':'Sécurité applicative, conception de systèmes sécurisés et automatisation de la sécurité par IA — intégrées à l’ensemble du cycle de développement.',
-    'Builds full-stack systems, multi-agent platforms and RAG pipelines — from data science down to embedded hardware.':'Construit des systèmes full-stack, des plateformes multi-agents et des pipelines RAG — de la data science au hardware embarqué.'
+    'Builds full-stack systems, multi-agent platforms and RAG pipelines — from data science down to embedded hardware.':'Construit des systèmes full-stack, des plateformes multi-agents et des pipelines RAG — de la data science au hardware embarqué.',
+    'OPEN CASE':'VOIR LE PROJET','DRAG THE DECK — CLICK TO OPEN':'FAITES GLISSER — CLIQUEZ POUR OUVRIR',
+    'START A':'DÉMARRER UN','PROJECT.':'PROJET.'
   }
 };
 
@@ -194,61 +198,286 @@ function ParticleField() {
   return <canvas ref={canvasRef} className="hero-canvas" aria-hidden="true" />;
 }
 
-const MANIFESTO_LINES = [
-  'Most digital work is designed to be understood.',
-  'We design it to be remembered.',
-];
-
 /**
- * Manifesto separator: the statement is pinned full-screen while the page
- * scrolls, and ink fills the words one by one with scroll progress — the
- * closing words resolve in accent blue. Brand-monochrome, no libraries.
+ * Manifesto: the first statement is written in ~2,000 ink particles that
+ * dissolve mid-scroll and re-assemble into the second while the section is
+ * pinned. "remembered." resolves in accent blue; the pointer scatters the
+ * dots, echoing the hero field. Pure canvas, no libraries.
  */
-function ManifestoScrub() {
+function ManifestoMorph() {
   const sectionRef = useRef(null);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
+    // Reduced motion: the CSS fallback shows the statement as static text.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const section = sectionRef.current;
-    const words = section.querySelectorAll('.m-word');
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      words.forEach((word) => word.classList.add('lit'));
-      return;
-    }
-    // Scroll events are frame-aligned in modern browsers, so updating
-    // directly is as smooth as an rAF loop and works even when rAF is
-    // throttled. The work is tiny: toggling a class on ~14 spans.
-    const update = () => {
-      const rect = section.getBoundingClientRect();
-      const scrollable = rect.height - window.innerHeight;
-      const progress = Math.min(1, Math.max(0, -rect.top / Math.max(1, scrollable)));
-      const lit = Math.round(progress * words.length);
-      words.forEach((word, index) => word.classList.toggle('lit', index < lit));
+    const canvas = canvasRef.current;
+    const sticky = canvas.parentElement;
+    const ctx = canvas.getContext('2d');
+    const INK = { r: 11, g: 23, b: 48 };
+    const ACCENT = { r: 65, g: 96, b: 159 };
+    let width = 0, height = 0, particles = [], raf = 0, visible = false, progress = 0;
+    const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999 };
+
+    // Greedy word-wrap for a phrase at a given font/width.
+    const layout = (octx, text, font, maxWidth) => {
+      octx.font = font;
+      const space = octx.measureText(' ').width;
+      const lines = [[]];
+      let lineWidth = 0;
+      text.split(' ').forEach((word) => {
+        const w = octx.measureText(word).width;
+        if (lineWidth > 0 && lineWidth + space + w > maxWidth) { lines.push([]); lineWidth = 0; }
+        lines[lines.length - 1].push({ word, w });
+        lineWidth += (lineWidth > 0 ? space : 0) + w;
+      });
+      return lines.map((words) => ({
+        words,
+        width: words.reduce((sum, entry, i) => sum + entry.w + (i > 0 ? space : 0), 0),
+      }));
     };
-    update();
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
+
+    // Render a phrase offscreen (accent word in the green channel, the rest
+    // in red) and sample the pixels into dot targets.
+    const samplePhrase = (text, accentWord) => {
+      const off = document.createElement('canvas');
+      off.width = width; off.height = height;
+      const octx = off.getContext('2d');
+      const fontSize = Math.max(30, Math.min(86, width * 0.058));
+      const font = `600 ${fontSize}px Manrope, sans-serif`;
+      const lineHeight = fontSize * 1.18;
+      const lines = layout(octx, text, font, width * 0.86);
+      const space = octx.measureText(' ').width;
+      octx.textBaseline = 'middle';
+      lines.forEach((line, li) => {
+        let x = (width - line.width) / 2;
+        const y = height / 2 + (li - (lines.length - 1) / 2) * lineHeight;
+        line.words.forEach((entry) => {
+          octx.fillStyle = entry.word === accentWord ? '#00ff00' : '#ff0000';
+          octx.fillText(entry.word, x, y);
+          x += entry.w + space;
+        });
+      });
+      const data = octx.getImageData(0, 0, width, height).data;
+      const step = fontSize > 56 ? 4 : 3;
+      const points = [];
+      for (let py = 0; py < height; py += step) {
+        for (let px = 0; px < width; px += step) {
+          const i = (py * width + px) * 4;
+          if (data[i + 3] > 128) points.push({ x: px, y: py, accent: data[i + 1] > 128 });
+        }
+      }
+      return points;
+    };
+
+    const shuffle = (arr) => {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    };
+
+    const build = () => {
+      width = Math.round(section.getBoundingClientRect().width);
+      height = Math.round(window.innerHeight);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = width * dpr; canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const a = shuffle(samplePhrase('Most digital work is designed to be understood.', null));
+      const b = shuffle(samplePhrase('We design it to be remembered.', 'remembered.'));
+      if (!a.length || !b.length) { particles = []; return; }
+      const count = Math.min(2600, Math.max(a.length, b.length));
+      particles = Array.from({ length: count }, (_, i) => {
+        const pa = a[i % a.length];
+        const pb = b[i % b.length];
+        const angle = Math.random() * Math.PI * 2;
+        return {
+          ax: pa.x, ay: pa.y, bx: pb.x, by: pb.y, accent: pb.accent,
+          size: 1.1 + Math.random() * 1.5,
+          sx: Math.cos(angle), sy: Math.sin(angle),
+          amp: 60 + Math.random() * 130,
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.4 + Math.random() * 0.8,
+        };
+      });
+    };
+
+    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const mix = (c1, c2, t) => ({
+      r: Math.round(c1.r + (c2.r - c1.r) * t),
+      g: Math.round(c1.g + (c2.g - c1.g) * t),
+      b: Math.round(c1.b + (c2.b - c1.b) * t),
+    });
+
+    const draw = () => {
+      pointer.x += (pointer.tx - pointer.x) * 0.12;
+      pointer.y += (pointer.ty - pointer.y) * 0.12;
+      ctx.clearRect(0, 0, width, height);
+      const t = ease(Math.min(1, Math.max(0, (progress - 0.24) / 0.52)));
+      const scatter = Math.sin(Math.PI * t); // 0 → 1 → 0 across the morph
+      const settle = Math.min(1, Math.max(0, (progress - 0.82) / 0.18));
+      const time = performance.now() / 1000;
+      const drift = 1 - settle * 0.85; // dots calm down once phrase B lands
+      for (const p of particles) {
+        let x = p.ax + (p.bx - p.ax) * t + p.sx * p.amp * scatter + Math.sin(time * p.speed + p.phase) * 1.4 * drift;
+        let y = p.ay + (p.by - p.ay) * t + p.sy * p.amp * 0.7 * scatter + Math.cos(time * p.speed * 0.9 + p.phase) * 1.4 * drift;
+        const dx = x - pointer.x, dy = y - pointer.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const force = Math.max(0, 1 - dist / 110);
+        x += (dx / dist) * 30 * force;
+        y += (dy / dist) * 30 * force;
+        const c = p.accent ? mix(INK, ACCENT, t) : INK;
+        ctx.fillStyle = `rgba(${c.r},${c.g},${c.b},${0.5 + 0.4 * (1 - scatter) + force * 0.1})`;
+        ctx.fillRect(x, y, p.size, p.size);
+      }
+    };
+
+    // Scroll drives the scrub directly (works even where rAF is throttled);
+    // the rAF loop only adds idle drift and pointer response while visible.
+    const onScroll = () => {
+      const rect = section.getBoundingClientRect();
+      progress = Math.min(1, Math.max(0, -rect.top / Math.max(1, rect.height - window.innerHeight)));
+      draw();
+    };
+    const loop = () => { draw(); raf = requestAnimationFrame(loop); };
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      cancelAnimationFrame(raf);
+      if (visible) raf = requestAnimationFrame(loop);
+    });
+    const onMove = (e) => {
+      const r = canvas.getBoundingClientRect();
+      pointer.tx = e.clientX - r.left;
+      pointer.ty = e.clientY - r.top;
+    };
+    const onLeave = () => { pointer.tx = -9999; pointer.ty = -9999; };
+    const onResize = () => { build(); onScroll(); };
+
+    build();
+    onScroll();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(onResize);
+    io.observe(section);
+    sticky.addEventListener('pointermove', onMove);
+    sticky.addEventListener('pointerleave', onLeave);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
     return () => {
-      window.removeEventListener('scroll', update);
-      window.removeEventListener('resize', update);
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      sticky.removeEventListener('pointermove', onMove);
+      sticky.removeEventListener('pointerleave', onLeave);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 
   return (
     <section className="manifesto" ref={sectionRef}>
       <div className="manifesto-sticky">
-        {MANIFESTO_LINES.map((line, lineIndex) => {
-          const wordList = line.split(' ');
+        <span className="manifesto-tag">( THE DIFFERENCE )</span>
+        <canvas ref={canvasRef} className="manifesto-canvas" aria-hidden="true" />
+        <p className="manifesto-static">Most digital work is designed to be understood. <em>We design it to be remembered.</em></p>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Selected work as a physical deck: cards stack with a fanned offset, the top
+ * card lifts on hover, dragging (or swiping) throws it to the back of the
+ * deck, clicking opens the case study. Arrow keys and buttons do the same.
+ */
+function WorkDeck({ projects, onOpen }) {
+  const [active, setActive] = useState(0);
+  const [leaving, setLeaving] = useState(null); // { index, dir: 'left'|'right' }
+  const drag = useRef(null);
+  const count = projects.length;
+  const pos = (i) => (i - active + count) % count;
+
+  const advance = (step, dir) => {
+    if (leaving) return;
+    setLeaving({ index: active, dir });
+    window.setTimeout(() => {
+      setActive((a) => (a + step + count) % count);
+      setLeaving(null);
+    }, 380);
+  };
+
+  const onPointerDown = (event) => {
+    if (leaving) return;
+    const node = event.currentTarget;
+    node.setPointerCapture(event.pointerId);
+    node.classList.add('dragging');
+    drag.current = { id: event.pointerId, x0: event.clientX, y0: event.clientY, dx: 0, moved: false, node };
+  };
+  const onPointerMove = (event) => {
+    const d = drag.current;
+    if (!d || event.pointerId !== d.id) return;
+    d.dx = event.clientX - d.x0;
+    const dy = event.clientY - d.y0;
+    if (Math.abs(d.dx) > 6 || Math.abs(dy) > 6) d.moved = true;
+    d.node.style.transform = `translate(${d.dx}px, ${dy * 0.35}px) rotate(${d.dx * 0.05}deg)`;
+  };
+  const onPointerUp = (event) => {
+    const d = drag.current;
+    if (!d || event.pointerId !== d.id) return;
+    drag.current = null;
+    d.node.classList.remove('dragging');
+    d.node.style.transform = '';
+    if (Math.abs(d.dx) > 90) advance(1, d.dx < 0 ? 'left' : 'right');
+    else if (!d.moved) onOpen(projects[active]);
+  };
+  const onKeyDown = (event) => {
+    if (event.key === 'ArrowRight') { event.preventDefault(); advance(1, 'left'); }
+    else if (event.key === 'ArrowLeft') { event.preventDefault(); advance(-1, 'right'); }
+    else if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onOpen(projects[active]); }
+  };
+
+  const current = projects[active];
+  return (
+    <div className="work-deck">
+      <div className="deck-stage" tabIndex={0} role="group" aria-label="Project deck — arrow keys to browse, Enter to open" onKeyDown={onKeyDown}>
+        {projects.map((project, i) => {
+          const p = pos(i);
+          const flying = leaving && leaving.index === i;
           return (
-            <p key={line}>
-              {wordList.map((word, wordIndex) => {
-                const accent = lineIndex === 1 && wordIndex >= wordList.length - 2;
-                return <span className={accent ? 'm-word m-accent' : 'm-word'} key={wordIndex}>{word}{' '}</span>;
-              })}
-            </p>
+            <article
+              className={`deck-card p${p}${p === 0 ? ' top' : ''}${flying ? ` fly-${leaving.dir}` : ''}`}
+              style={{ zIndex: flying ? count + 1 : count - p }}
+              key={project.name}
+              onPointerDown={p === 0 && !flying ? onPointerDown : undefined}
+              onPointerMove={p === 0 ? onPointerMove : undefined}
+              onPointerUp={p === 0 ? onPointerUp : undefined}
+              onPointerCancel={p === 0 ? onPointerUp : undefined}
+            >
+              <div className={`project-visual ${project.tone}`}>
+                <img src={project.image} alt={`${project.name} website preview`} loading="lazy" draggable={false} />
+                <div className="visual-grid" />
+                <span className="project-mark">{project.mark.split('\n').map((line) => <span key={line}>{line}</span>)}</span>
+                <span className="project-index">({project.id})</span>
+              </div>
+              <div className="deck-meta"><h3>{project.name}</h3><span>{project.type}</span></div>
+            </article>
           );
         })}
       </div>
-    </section>
+      <div className="deck-info" key={current.name}>
+        <span className="deck-count">0{active + 1} / 0{count}</span>
+        <h3>{current.name}</h3>
+        <span className="deck-type">{current.type}</span>
+        <p>{current.impact}</p>
+        <div className="deck-actions">
+          <button className="deck-open" onClick={() => onOpen(current)}>OPEN CASE <Arrow diagonal /></button>
+          <div className="deck-nav">
+            <button onClick={() => advance(-1, 'right')} aria-label="Previous project">←</button>
+            <button onClick={() => advance(1, 'left')} aria-label="Next project">→</button>
+          </div>
+        </div>
+        <span className="deck-hint">DRAG THE DECK — CLICK TO OPEN</span>
+      </div>
+    </div>
   );
 }
 
@@ -260,6 +489,14 @@ function App() {
   const [contactOpen, setContactOpen] = useState(false);
   const [formStatus, setFormStatus] = useState('idle');
   const [formData, setFormData] = useState({ type:'New digital product', name:'', email:'', brief:'', website:'' });
+  const nameInputRef = useRef(null);
+
+  // Focus the first field once the takeover has slid into place.
+  useEffect(() => {
+    if (!contactOpen) return;
+    const timer = window.setTimeout(() => nameInputRef.current?.focus(), 500);
+    return () => window.clearTimeout(timer);
+  }, [contactOpen]);
 
   useEffect(() => {
     const onKey = (event) => {
@@ -305,7 +542,7 @@ function App() {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const targets = document.querySelectorAll(
-      '.section-heading, .project-card, .service, .process-grid article, .team-grid article, .faq-list article, .inquiry-head, .inquiry-cta, .direct-contact > div'
+      '.section-heading, .work-deck, .service, .process-grid article, .team-grid article, .faq-list article, .inquiry-head, .inquiry-cta, .direct-contact > div'
     );
     const observer = new IntersectionObserver(
       (entries) => {
@@ -405,19 +642,7 @@ function App() {
             <div><span className="eyebrow-label">( SELECTED WORK )</span><h2>BUILT TO<br />BE FELT.</h2></div>
             <p>Live client platforms and solution blueprints across energy, manufacturing, construction, precision engineering and custom automation.</p>
           </div>
-          <div className="project-grid">
-            {projects.map((project) => (
-              <article className="project-card" key={project.name}>
-                <div className={`project-visual ${project.tone}`}>
-                  <img src={project.image} alt={`${project.name} website preview`} loading="lazy" />
-                  <div className="visual-grid" />
-                  <span className="project-mark">{project.mark.split('\n').map((line) => <span key={line}>{line}</span>)}</span>
-                  <span className="project-index">({project.id})</span>
-                </div>
-                <div className="project-meta"><h3>{project.name}</h3><span>{project.type}</span><button onClick={() => setSelectedProject(project)} aria-label={`View ${project.name} case study`}><Arrow diagonal /></button></div>
-              </article>
-            ))}
-          </div>
+          <WorkDeck projects={projects} onOpen={setSelectedProject} />
         </section>
 
         <section className="services" id="services">
@@ -446,7 +671,7 @@ function App() {
           </div>
         </section>
 
-        <ManifestoScrub />
+        <ManifestoMorph />
 
         <section className="studio section-pad" id="studio">
           <div className="section-heading">
@@ -484,30 +709,36 @@ function App() {
           </footer>
         </section>
       </main>
-      {contactOpen && <div className="contact-modal" role="dialog" aria-modal="true" aria-label="Project inquiry" onMouseDown={(e) => { if (e.target === e.currentTarget) setContactOpen(false); }}>
-        <div className="contact-panel">
-          <button className="panel-close" onClick={() => setContactOpen(false)} aria-label="Close inquiry form">×</button>
-          <span className="eyebrow-label">( PROJECT BRIEF )</span>
-          <h3>START A PROJECT.</h3>
-          {formStatus === 'sent' ? (
-            <div className="sent-block" role="status">
-              <strong>Thank you.</strong>
-              <p>Your brief is on its way — we reply within two business days.</p>
-              <button className="open-contact" onClick={() => setContactOpen(false)}>CLOSE</button>
-            </div>
-          ) : (
-            <form onSubmit={submitInquiry} noValidate>
-              <fieldset><legend>01 / What are you planning?</legend><div className="choice-row">{['New digital product','Replatform / redesign','Brand + website','Automation','Audit & direction'].map(value => <button type="button" className={formData.type === value ? 'active' : ''} onClick={() => setField('type', value)} key={value}>{value}</button>)}</div></fieldset>
-              <div className="input-grid"><label>Name *<input value={formData.name} onChange={e => setField('name', e.target.value)} placeholder="Your name" autoComplete="name" /></label><label>Email *<input type="email" value={formData.email} onChange={e => setField('email', e.target.value)} placeholder="you@company.com" autoComplete="email" /></label></div>
-              <label className="brief-label">Tell us about it *<textarea value={formData.brief} onChange={e => setField('brief', e.target.value)} placeholder="What are you building, where is it stuck, and what should be true after we work together?" /></label>
-              <label className="hp-field" aria-hidden="true">Website<input tabIndex={-1} autoComplete="off" value={formData.website} onChange={e => setField('website', e.target.value)} /></label>
-              <div className="form-foot"><span>RESPONSE / WITHIN TWO BUSINESS DAYS</span><button type="submit" disabled={formStatus === 'sending'}>{formStatus === 'sending' ? 'SENDING…' : <>SEND INQUIRY <Arrow diagonal /></>}</button></div>
-              {formStatus === 'invalid' && <p className="form-message error" role="alert">Please add your name, a valid email address and a short project brief.</p>}
-              {formStatus === 'error' && <p className="form-message error" role="alert">Could not send — please email contact@ossolut.com directly.</p>}
-            </form>
-          )}
+      <div className={`contact-takeover${contactOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Project inquiry" aria-hidden={!contactOpen}>
+        <button className="takeover-close" onClick={() => setContactOpen(false)} aria-label="Close inquiry form">CLOSE ×</button>
+        <div className="takeover-grid">
+          <div className="takeover-intro">
+            <span className="eyebrow-label">( PROJECT BRIEF )</span>
+            <h3>START A<br />PROJECT.</h3>
+            <p>A short brief is enough. It lands directly with the engineers who will actually build your project.</p>
+            <a href="mailto:contact@ossolut.com">contact@ossolut.com</a>
+          </div>
+          <div className="takeover-form">
+            {formStatus === 'sent' ? (
+              <div className="sent-block" role="status">
+                <strong>Thank you.</strong>
+                <p>Your brief is on its way — we reply within two business days.</p>
+                <button className="open-contact" onClick={() => setContactOpen(false)}>CLOSE</button>
+              </div>
+            ) : (
+              <form onSubmit={submitInquiry} noValidate>
+                <fieldset><legend>01 / What are you planning?</legend><div className="choice-row">{['New digital product','Replatform / redesign','Brand + website','Automation','Audit & direction'].map(value => <button type="button" className={formData.type === value ? 'active' : ''} onClick={() => setField('type', value)} key={value}>{value}</button>)}</div></fieldset>
+                <div className="input-grid"><label>Name *<input ref={nameInputRef} value={formData.name} onChange={e => setField('name', e.target.value)} placeholder="Your name" autoComplete="name" /></label><label>Email *<input type="email" value={formData.email} onChange={e => setField('email', e.target.value)} placeholder="you@company.com" autoComplete="email" /></label></div>
+                <label className="brief-label">Tell us about it *<textarea value={formData.brief} onChange={e => setField('brief', e.target.value)} placeholder="What are you building, where is it stuck, and what should be true after we work together?" /></label>
+                <label className="hp-field" aria-hidden="true">Website<input tabIndex={-1} autoComplete="off" value={formData.website} onChange={e => setField('website', e.target.value)} /></label>
+                <div className="form-foot"><span>RESPONSE / WITHIN TWO BUSINESS DAYS</span><button type="submit" disabled={formStatus === 'sending'}>{formStatus === 'sending' ? 'SENDING…' : <>SEND INQUIRY <Arrow diagonal /></>}</button></div>
+                {formStatus === 'invalid' && <p className="form-message error" role="alert">Please add your name, a valid email address and a short project brief.</p>}
+                {formStatus === 'error' && <p className="form-message error" role="alert">Could not send — please email contact@ossolut.com directly.</p>}
+              </form>
+            )}
+          </div>
         </div>
-      </div>}
+      </div>
       {selectedProject && <div className="case-modal" role="dialog" aria-modal="true" aria-label={`${selectedProject.name} case study`}>
         <button className="case-close" onClick={() => setSelectedProject(null)}>CLOSE ×</button>
         <div className={`case-hero ${selectedProject.tone}`} style={{ backgroundImage:`linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.55)), url(${selectedProject.image})` }}><span>CLIENT PROJECT / {selectedProject.id} · {selectedProject.year}</span><h2>{selectedProject.name}</h2><strong>{selectedProject.impact}</strong></div>
