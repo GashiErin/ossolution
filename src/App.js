@@ -30,8 +30,7 @@ const translations = {
     'Focused on intelligent automation, custom integrations and the systems that streamline business processes.':'Fokussiert auf intelligente Automatisierung, individuelle Integrationen und Systeme, die Geschäftsprozesse verschlanken.',
     'Specializes in application security, secure system design and AI-powered security automation — integrating security across the development lifecycle.':'Spezialisiert auf Anwendungssicherheit, sicheres Systemdesign und KI-gestützte Security-Automatisierung — Sicherheit über den gesamten Entwicklungszyklus hinweg.',
     'Builds full-stack systems, multi-agent platforms and RAG pipelines — from data science down to embedded hardware.':'Entwickelt Full-Stack-Systeme, Multi-Agent-Plattformen und RAG-Pipelines — von Data Science bis zu Embedded Hardware.',
-    'OPEN CASE':'PROJEKT ÖFFNEN','DRAG THE DECK — CLICK TO OPEN':'DECK ZIEHEN — KLICKEN ZUM ÖFFNEN',
-    'START A':'PROJEKT','PROJECT.':'STARTEN.'
+    'OPEN CASE':'PROJEKT ÖFFNEN','DRAG THE DECK — CLICK TO OPEN':'DECK ZIEHEN — KLICKEN ZUM ÖFFNEN'
   },
   FR: {
     ...fullTranslations.FR,
@@ -55,8 +54,7 @@ const translations = {
     'Focused on intelligent automation, custom integrations and the systems that streamline business processes.':'Automatisation intelligente, intégrations personnalisées et systèmes qui fluidifient les processus métier.',
     'Specializes in application security, secure system design and AI-powered security automation — integrating security across the development lifecycle.':'Sécurité applicative, conception de systèmes sécurisés et automatisation de la sécurité par IA — intégrées à l’ensemble du cycle de développement.',
     'Builds full-stack systems, multi-agent platforms and RAG pipelines — from data science down to embedded hardware.':'Construit des systèmes full-stack, des plateformes multi-agents et des pipelines RAG — de la data science au hardware embarqué.',
-    'OPEN CASE':'VOIR LE PROJET','DRAG THE DECK — CLICK TO OPEN':'FAITES GLISSER — CLIQUEZ POUR OUVRIR',
-    'START A':'DÉMARRER UN','PROJECT.':'PROJET.'
+    'OPEN CASE':'VOIR LE PROJET','DRAG THE DECK — CLICK TO OPEN':'FAITES GLISSER — CLIQUEZ POUR OUVRIR'
   }
 };
 
@@ -196,192 +194,6 @@ function ParticleField() {
   }, []);
 
   return <canvas ref={canvasRef} className="hero-canvas" aria-hidden="true" />;
-}
-
-/**
- * Manifesto: the first statement is written in ~2,000 ink particles that
- * dissolve mid-scroll and re-assemble into the second while the section is
- * pinned. "remembered." resolves in accent blue; the pointer scatters the
- * dots, echoing the hero field. Pure canvas, no libraries.
- */
-function ManifestoMorph() {
-  const sectionRef = useRef(null);
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    // Reduced motion: the CSS fallback shows the statement as static text.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const section = sectionRef.current;
-    const canvas = canvasRef.current;
-    const sticky = canvas.parentElement;
-    const ctx = canvas.getContext('2d');
-    const INK = { r: 11, g: 23, b: 48 };
-    const ACCENT = { r: 65, g: 96, b: 159 };
-    let width = 0, height = 0, particles = [], raf = 0, visible = false, progress = 0;
-    const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999 };
-
-    // Greedy word-wrap for a phrase at a given font/width.
-    const layout = (octx, text, font, maxWidth) => {
-      octx.font = font;
-      const space = octx.measureText(' ').width;
-      const lines = [[]];
-      let lineWidth = 0;
-      text.split(' ').forEach((word) => {
-        const w = octx.measureText(word).width;
-        if (lineWidth > 0 && lineWidth + space + w > maxWidth) { lines.push([]); lineWidth = 0; }
-        lines[lines.length - 1].push({ word, w });
-        lineWidth += (lineWidth > 0 ? space : 0) + w;
-      });
-      return lines.map((words) => ({
-        words,
-        width: words.reduce((sum, entry, i) => sum + entry.w + (i > 0 ? space : 0), 0),
-      }));
-    };
-
-    // Render a phrase offscreen (accent word in the green channel, the rest
-    // in red) and sample the pixels into dot targets.
-    const samplePhrase = (text, accentWord) => {
-      const off = document.createElement('canvas');
-      off.width = width; off.height = height;
-      const octx = off.getContext('2d');
-      const fontSize = Math.max(30, Math.min(86, width * 0.058));
-      const font = `600 ${fontSize}px Manrope, sans-serif`;
-      const lineHeight = fontSize * 1.18;
-      const lines = layout(octx, text, font, width * 0.86);
-      const space = octx.measureText(' ').width;
-      octx.textBaseline = 'middle';
-      lines.forEach((line, li) => {
-        let x = (width - line.width) / 2;
-        const y = height / 2 + (li - (lines.length - 1) / 2) * lineHeight;
-        line.words.forEach((entry) => {
-          octx.fillStyle = entry.word === accentWord ? '#00ff00' : '#ff0000';
-          octx.fillText(entry.word, x, y);
-          x += entry.w + space;
-        });
-      });
-      const data = octx.getImageData(0, 0, width, height).data;
-      const step = fontSize > 56 ? 4 : 3;
-      const points = [];
-      for (let py = 0; py < height; py += step) {
-        for (let px = 0; px < width; px += step) {
-          const i = (py * width + px) * 4;
-          if (data[i + 3] > 128) points.push({ x: px, y: py, accent: data[i + 1] > 128 });
-        }
-      }
-      return points;
-    };
-
-    const shuffle = (arr) => {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    };
-
-    const build = () => {
-      width = Math.round(section.getBoundingClientRect().width);
-      height = Math.round(window.innerHeight);
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = width * dpr; canvas.height = height * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const a = shuffle(samplePhrase('Most digital work is designed to be understood.', null));
-      const b = shuffle(samplePhrase('We design it to be remembered.', 'remembered.'));
-      if (!a.length || !b.length) { particles = []; return; }
-      const count = Math.min(2600, Math.max(a.length, b.length));
-      particles = Array.from({ length: count }, (_, i) => {
-        const pa = a[i % a.length];
-        const pb = b[i % b.length];
-        const angle = Math.random() * Math.PI * 2;
-        return {
-          ax: pa.x, ay: pa.y, bx: pb.x, by: pb.y, accent: pb.accent,
-          size: 1.1 + Math.random() * 1.5,
-          sx: Math.cos(angle), sy: Math.sin(angle),
-          amp: 60 + Math.random() * 130,
-          phase: Math.random() * Math.PI * 2,
-          speed: 0.4 + Math.random() * 0.8,
-        };
-      });
-    };
-
-    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-    const mix = (c1, c2, t) => ({
-      r: Math.round(c1.r + (c2.r - c1.r) * t),
-      g: Math.round(c1.g + (c2.g - c1.g) * t),
-      b: Math.round(c1.b + (c2.b - c1.b) * t),
-    });
-
-    const draw = () => {
-      pointer.x += (pointer.tx - pointer.x) * 0.12;
-      pointer.y += (pointer.ty - pointer.y) * 0.12;
-      ctx.clearRect(0, 0, width, height);
-      const t = ease(Math.min(1, Math.max(0, (progress - 0.24) / 0.52)));
-      const scatter = Math.sin(Math.PI * t); // 0 → 1 → 0 across the morph
-      const settle = Math.min(1, Math.max(0, (progress - 0.82) / 0.18));
-      const time = performance.now() / 1000;
-      const drift = 1 - settle * 0.85; // dots calm down once phrase B lands
-      for (const p of particles) {
-        let x = p.ax + (p.bx - p.ax) * t + p.sx * p.amp * scatter + Math.sin(time * p.speed + p.phase) * 1.4 * drift;
-        let y = p.ay + (p.by - p.ay) * t + p.sy * p.amp * 0.7 * scatter + Math.cos(time * p.speed * 0.9 + p.phase) * 1.4 * drift;
-        const dx = x - pointer.x, dy = y - pointer.y;
-        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const force = Math.max(0, 1 - dist / 110);
-        x += (dx / dist) * 30 * force;
-        y += (dy / dist) * 30 * force;
-        const c = p.accent ? mix(INK, ACCENT, t) : INK;
-        ctx.fillStyle = `rgba(${c.r},${c.g},${c.b},${0.5 + 0.4 * (1 - scatter) + force * 0.1})`;
-        ctx.fillRect(x, y, p.size, p.size);
-      }
-    };
-
-    // Scroll drives the scrub directly (works even where rAF is throttled);
-    // the rAF loop only adds idle drift and pointer response while visible.
-    const onScroll = () => {
-      const rect = section.getBoundingClientRect();
-      progress = Math.min(1, Math.max(0, -rect.top / Math.max(1, rect.height - window.innerHeight)));
-      draw();
-    };
-    const loop = () => { draw(); raf = requestAnimationFrame(loop); };
-    const io = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      cancelAnimationFrame(raf);
-      if (visible) raf = requestAnimationFrame(loop);
-    });
-    const onMove = (e) => {
-      const r = canvas.getBoundingClientRect();
-      pointer.tx = e.clientX - r.left;
-      pointer.ty = e.clientY - r.top;
-    };
-    const onLeave = () => { pointer.tx = -9999; pointer.ty = -9999; };
-    const onResize = () => { build(); onScroll(); };
-
-    build();
-    onScroll();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(onResize);
-    io.observe(section);
-    sticky.addEventListener('pointermove', onMove);
-    sticky.addEventListener('pointerleave', onLeave);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize);
-    return () => {
-      cancelAnimationFrame(raf);
-      io.disconnect();
-      sticky.removeEventListener('pointermove', onMove);
-      sticky.removeEventListener('pointerleave', onLeave);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
-    };
-  }, []);
-
-  return (
-    <section className="manifesto" ref={sectionRef}>
-      <div className="manifesto-sticky">
-        <span className="manifesto-tag">( THE DIFFERENCE )</span>
-        <canvas ref={canvasRef} className="manifesto-canvas" aria-hidden="true" />
-        <p className="manifesto-static">Most digital work is designed to be understood. <em>We design it to be remembered.</em></p>
-      </div>
-    </section>
-  );
 }
 
 /**
@@ -542,7 +354,7 @@ function App() {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const targets = document.querySelectorAll(
-      '.section-heading, .work-deck, .service, .process-grid article, .team-grid article, .faq-list article, .inquiry-head, .inquiry-cta, .direct-contact > div'
+      '.section-heading, .work-deck, .service, .process-grid article, .manifesto p, .team-grid article, .faq-list article, .inquiry-head, .inquiry-cta, .direct-contact > div'
     );
     const observer = new IntersectionObserver(
       (entries) => {
@@ -671,7 +483,10 @@ function App() {
           </div>
         </section>
 
-        <ManifestoMorph />
+        <section className="manifesto section-pad">
+          <p>Most digital work is designed to be understood.</p>
+          <p className="muted">We design it to be <em>remembered.</em></p>
+        </section>
 
         <section className="studio section-pad" id="studio">
           <div className="section-heading">
@@ -709,16 +524,13 @@ function App() {
           </footer>
         </section>
       </main>
-      <div className={`contact-takeover${contactOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Project inquiry" aria-hidden={!contactOpen}>
-        <button className="takeover-close" onClick={() => setContactOpen(false)} aria-label="Close inquiry form">CLOSE ×</button>
-        <div className="takeover-grid">
-          <div className="takeover-intro">
-            <span className="eyebrow-label">( PROJECT BRIEF )</span>
-            <h3>START A<br />PROJECT.</h3>
-            <p>A short brief is enough. It lands directly with the engineers who will actually build your project.</p>
-            <a href="mailto:contact@ossolut.com">contact@ossolut.com</a>
-          </div>
-          <div className="takeover-form">
+      <div className={`contact-modal${contactOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Project inquiry" aria-hidden={!contactOpen} onMouseDown={(e) => { if (e.target === e.currentTarget) setContactOpen(false); }}>
+        <div className="contact-panel">
+          <button className="panel-close" onClick={() => setContactOpen(false)} aria-label="Close inquiry form">×</button>
+          <span className="eyebrow-label">( PROJECT BRIEF )</span>
+          <h3>START A PROJECT.</h3>
+          <p className="panel-note">A short brief is enough. It lands directly with the engineers who will actually build your project.</p>
+          <div className="panel-body">
             {formStatus === 'sent' ? (
               <div className="sent-block" role="status">
                 <strong>Thank you.</strong>

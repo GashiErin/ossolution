@@ -24,7 +24,8 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!-- Ossolut AI assistant — served by the ossolut-chatbot server -->
+    <!-- Ossolut AI assistant — same-origin: /widget.js (this folder) + /api/chat
+         (Vercel edge function in prod, ossolut-chatbot dev server via proxy in dev) -->
     <script src="%REACT_APP_CHATBOT_URL%/widget.js" defer
             data-endpoint="%REACT_APP_CHATBOT_URL%/api/chat"
             data-name="Ossolut Assistant"
