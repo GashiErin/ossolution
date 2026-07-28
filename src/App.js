@@ -10,6 +10,7 @@ import imgOratek from './assets/projects/oratek.webp';
 const translations = {
   DE: {
     ...fullTranslations.DE,
+    'CONTACT US':'KONTAKT',
     'Independent creative studio':'Unabhängiges Kreativstudio','Navigate / 2026':'Navigation / 2026','Work':'Projekte','Services':'Leistungen','Studio':'Studio','Contact':'Kontakt','WE MAKE':'WIR MACHEN','DIGITAL':'DIGITALES','FEEL ALIVE.':'SPÜRBAR.','EXPLORE':'PROJEKTE','OUR WORK':'ENTDECKEN','SCROLL TO DISCOVER':'WEITER SCROLLEN','BUILT TO':'GEMACHT, UM','BE FELT.':'ZU WIRKEN.','VIEW ALL PROJECTS':'ALLE PROJEKTE','ONE STUDIO.':'EIN STUDIO.','NO SILOS.':'KEINE SILOS.','HOW WE WORK':'WIE WIR ARBEITEN','FOUR STAGES.':'VIER PHASEN.','NO THEATRE.':'KEIN THEATER.','Discover':'Entdecken','Define':'Definieren','Build':'Umsetzen','Launch & steward':'Start & Betreuung','THE STUDIO':'DAS STUDIO','SENIOR PEOPLE.':'ERFAHRENE MENSCHEN.','ZERO THEATRE.':'NULL THEATER.','CORE TEAM':'KERNTEAM','THE USEFUL QUESTIONS.':'DIE WICHTIGEN FRAGEN.','GIVE US THE':'NENNEN SIE UNS DAS','REAL PROBLEM.':'ECHTE PROBLEM.','What are you planning?':'Was planen Sie?','Name':'Name','Email':'E-Mail','Tell us about it':'Erzählen Sie uns davon','SEND INQUIRY':'ANFRAGE SENDEN','START A PROJECT':'PROJEKT STARTEN','SENDING…':'WIRD GESENDET…','DIRECT CONTACT':'DIREKTER KONTAKT','CLIENT PROJECT':'KUNDENPROJEKT','SOLUTION BLUEPRINT':'LÖSUNGSKONZEPT','CAPABILITIES':'KOMPETENZEN','SCOPE':'UMFANG','THE CHALLENGE':'DIE HERAUSFORDERUNG','OUR RESPONSE':'UNSERE LÖSUNG','THE RESULT':'DAS ERGEBNIS','VISIT LIVE WEBSITE':'LIVE-WEBSITE ÖFFNEN','NEXT CASE':'NÄCHSTES PROJEKT','CLOSE':'SCHLIESSEN','BACK TO TOP':'NACH OBEN',
     'Kosovo / Worldwide':'Kosovo / Weltweit','KOSOVO':'KOSOVO','Thank you.':'Vielen Dank.',
     'Your brief is on its way — we reply within two business days.':'Ihre Anfrage ist unterwegs — wir antworten innerhalb von zwei Werktagen.',
@@ -34,6 +35,7 @@ const translations = {
   },
   FR: {
     ...fullTranslations.FR,
+    'CONTACT US':'NOUS CONTACTER',
     'Independent creative studio':'Studio créatif indépendant','Navigate / 2026':'Navigation / 2026','Work':'Projets','Services':'Services','Studio':'Studio','Contact':'Contact','WE MAKE':'NOUS RENDONS','DIGITAL':'LE DIGITAL','FEEL ALIVE.':'VIVANT.','EXPLORE':'DÉCOUVREZ','OUR WORK':'NOS PROJETS','SCROLL TO DISCOVER':'FAITES DÉFILER','BUILT TO':'CONÇU POUR','BE FELT.':'ÊTRE RESSENTI.','VIEW ALL PROJECTS':'VOIR TOUS LES PROJETS','ONE STUDIO.':'UN STUDIO.','NO SILOS.':'SANS SILOS.','HOW WE WORK':'NOTRE MÉTHODE','FOUR STAGES.':'QUATRE ÉTAPES.','NO THEATRE.':'SANS CINÉMA.','Discover':'Découvrir','Define':'Définir','Build':'Construire','Launch & steward':'Lancer & accompagner','THE STUDIO':'LE STUDIO','SENIOR PEOPLE.':'DES EXPERTS.','ZERO THEATRE.':'SANS CINÉMA.','CORE TEAM':'ÉQUIPE PRINCIPALE','THE USEFUL QUESTIONS.':'LES BONNES QUESTIONS.','GIVE US THE':'PARLEZ-NOUS DU','REAL PROBLEM.':'VRAI PROBLÈME.','What are you planning?':'Que prévoyez-vous ?','Name':'Nom','Email':'E-mail','Tell us about it':'Parlez-nous du projet','SEND INQUIRY':'ENVOYER LA DEMANDE','START A PROJECT':'DÉMARRER UN PROJET','SENDING…':'ENVOI…','DIRECT CONTACT':'CONTACT DIRECT','CLIENT PROJECT':'PROJET CLIENT','SOLUTION BLUEPRINT':'CONCEPT DE SOLUTION','CAPABILITIES':'COMPÉTENCES','SCOPE':'PÉRIMÈTRE','THE CHALLENGE':'LE DÉFI','OUR RESPONSE':'NOTRE RÉPONSE','THE RESULT':'LE RÉSULTAT','VISIT LIVE WEBSITE':'VISITER LE SITE','NEXT CASE':'PROJET SUIVANT','CLOSE':'FERMER','BACK TO TOP':'RETOUR EN HAUT',
     'Kosovo / Worldwide':'Kosovo / Monde entier','Thank you.':'Merci.',
     'Your brief is on its way — we reply within two business days.':'Votre brief est en route — nous répondons sous deux jours ouvrés.',
@@ -346,8 +348,13 @@ function App() {
   }, [language]);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen || selectedProject || contactOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    const locked = menuOpen || selectedProject || contactOpen;
+    document.body.style.overflow = locked ? 'hidden' : '';
+    document.documentElement.style.overflow = locked ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
   }, [menuOpen, selectedProject, contactOpen]);
 
   // Reveal-on-scroll: elements fade/rise in as they enter the viewport.
@@ -444,7 +451,7 @@ function App() {
               <span className="hero-line">FEEL ALIVE.</span>
             </h1>
             <p>We build expressive identities and digital experiences for ambitious technology brands.</p>
-            <a className="hero-cta" href="#work">EXPLORE OUR WORK <Arrow diagonal /></a>
+            <button className="hero-cta" type="button" onClick={openContact}>CONTACT US <Arrow diagonal /></button>
           </div>
           <div className="hero-foot"><span className="scroll-note">SCROLL TO DISCOVER ↓</span></div>
         </section>
@@ -461,7 +468,10 @@ function App() {
           <div className="section-pad">
             <div className="section-heading">
               <div><span className="eyebrow-label">( SERVICES / EXPERTISE )</span><h2>ONE STUDIO.<br /><em>NO SILOS.</em></h2></div>
-              <p>From the first strategic question to the last line of code, we keep disciplines together so the idea stays intact.</p>
+              <div className="services-lead">
+                <p>From the first strategic question to the last line of code, we keep disciplines together so the idea stays intact.</p>
+                <button className="services-contact" type="button" onClick={openContact}>CONTACT US <Arrow diagonal /></button>
+              </div>
             </div>
             <div className="service-grid">
               {services.map((service) => (
@@ -504,14 +514,12 @@ function App() {
         </section>
 
         <section className="inquiry section-pad" id="inquiry">
-          <div className="inquiry-head"><span className="eyebrow-label">( PROJECT BRIEF )</span><h2>GIVE US THE<br /><em>REAL PROBLEM.</em></h2><p>Name, a valid email and a short brief. We reply within two business days.</p></div>
-          <div className="inquiry-cta">
-            <p>A short brief is enough. It lands directly with the engineers who will actually build your project.</p>
-            <button className="open-contact" onClick={openContact}>START A PROJECT <Arrow diagonal /></button>
-            <span className="cta-note">RESPONSE / WITHIN TWO BUSINESS DAYS</span>
+          <div className="inquiry-head"><span className="eyebrow-label">( PROJECT BRIEF )</span><h2>GIVE US THE<br /><em>REAL PROBLEM.</em></h2><p>A short brief is enough. It goes directly to the engineers who will build your project, and we reply within two business days.</p></div>
+          <div className="inquiry-action">
+            <button className="open-contact" onClick={openContact}>CONTACT US <Arrow diagonal /></button>
           </div>
           <aside className="direct-contact">
-            <div><span>( DIRECT CONTACT )</span><a href="mailto:contact@ossolut.com">contact@ossolut.com</a><p>For an NDA, RFP or a quick fit check, contact our studio directly.</p></div>
+            <div><span>OR EMAIL US DIRECTLY</span><a href="mailto:contact@ossolut.com">contact@ossolut.com</a><p>For an NDA, RFP or a quick fit check.</p></div>
           </aside>
         </section>
 

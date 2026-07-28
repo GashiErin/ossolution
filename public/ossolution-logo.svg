@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
+  <title id="title">ossolution logo</title>
+  <desc id="desc">An orbital OS symbol followed by the lowercase ossolution wordmark.</desc>
+  <g transform="translate(34 34)">
+    <circle cx="126" cy="126" r="112" fill="#ff4e36"/>
+    <circle cx="126" cy="126" r="67" fill="none" stroke="#151515" stroke-width="25"/>
+    <path d="M126 59a67 67 0 0 1 58 33.5" fill="none" stroke="#f0efe9" stroke-width="25" stroke-linecap="round"/>
+    <path d="M126 193a67 67 0 0 1-58-33.5" fill="none" stroke="#151515" stroke-width="25" stroke-linecap="round"/>
+    <circle cx="126" cy="126" r="18" fill="#151515"/>
+    <circle cx="207" cy="48" r="17" fill="#d9ff43" stroke="#151515" stroke-width="7"/>
+  </g>
+  <text x="322" y="213" fill="#151515" font-family="Manrope, Arial, sans-serif" font-size="168" font-weight="700" letter-spacing="-11">ossolution</text>
+  <text x="1127" y="94" fill="#151515" font-family="DM Mono, monospace" font-size="22">®</text>
+</svg>
