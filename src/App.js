@@ -305,6 +305,7 @@ function App() {
   const [faqOpen, setFaqOpen] = useState(0);
   const [contactOpen, setContactOpen] = useState(false);
   const [formStatus, setFormStatus] = useState('idle');
+  const [formError, setFormError] = useState('');
   const [formData, setFormData] = useState({ type:'New digital product', name:'', email:'', brief:'', website:'' });
   const nameInputRef = useRef(null);
 
@@ -388,6 +389,7 @@ function App() {
   const setField = (key, value) => setFormData(current => ({ ...current, [key]: value }));
   const openContact = () => {
     if (formStatus === 'sent') { setFormStatus('idle'); setFormData(current => ({ ...current, brief:'' })); }
+    setFormError('');
     setContactOpen(true);
   };
   const submitInquiry = async (event) => {
@@ -408,9 +410,12 @@ function App() {
         }),
       });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok || !data.ok) throw new Error(data.error || 'send failed');
+      if (!response.ok || !data.ok) throw new Error(data.error || '');
       setFormStatus('sent');
-    } catch {
+    } catch (error) {
+      // A TypeError here is the network itself failing, which has nothing
+      // useful to show a visitor; anything else came back from the endpoint.
+      setFormError(error instanceof TypeError ? '' : error.message);
       setFormStatus('error');
     }
   };
@@ -556,7 +561,7 @@ function App() {
                 <label className="hp-field" aria-hidden="true">Website<input tabIndex={-1} autoComplete="off" value={formData.website} onChange={e => setField('website', e.target.value)} /></label>
                 <div className="form-foot"><span>RESPONSE / WITHIN TWO BUSINESS DAYS</span><button type="submit" disabled={formStatus === 'sending'}>{formStatus === 'sending' ? 'SENDING…' : <>SEND INQUIRY <Arrow diagonal /></>}</button></div>
                 {formStatus === 'invalid' && <p className="form-message error" role="alert">Please add your name, a valid email address and a short project brief.</p>}
-                {formStatus === 'error' && <p className="form-message error" role="alert">Could not send — please email ossolut1@gmail.com directly.</p>}
+                {formStatus === 'error' && <p className="form-message error" role="alert">{formError || 'Could not send — please email ossolut1@gmail.com directly.'}</p>}
               </form>
             )}
           </div>
