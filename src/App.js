@@ -15,7 +15,7 @@ const translations = {
     'Independent creative studio':'Unabhängiges Kreativstudio','Navigate / 2026':'Navigation / 2026','Work':'Projekte','Services':'Leistungen','Studio':'Studio','Contact':'Kontakt','WE MAKE':'WIR MACHEN','DIGITAL':'DIGITALES','FEEL ALIVE.':'SPÜRBAR.','EXPLORE':'PROJEKTE','OUR WORK':'ENTDECKEN','SCROLL TO DISCOVER':'WEITER SCROLLEN','BUILT TO':'GEMACHT, UM','BE FELT.':'ZU WIRKEN.','VIEW ALL PROJECTS':'ALLE PROJEKTE','ONE STUDIO.':'EIN STUDIO.','NO SILOS.':'KEINE SILOS.','HOW WE WORK':'WIE WIR ARBEITEN','FOUR STAGES.':'VIER PHASEN.','NO THEATRE.':'KEIN THEATER.','Discover':'Entdecken','Define':'Definieren','Build':'Umsetzen','Launch & steward':'Start & Betreuung','THE STUDIO':'DAS STUDIO','SENIOR PEOPLE.':'ERFAHRENE MENSCHEN.','ZERO THEATRE.':'NULL THEATER.','CORE TEAM':'KERNTEAM','THE USEFUL QUESTIONS.':'DIE WICHTIGEN FRAGEN.','GIVE US THE':'NENNEN SIE UNS DAS','REAL PROBLEM.':'ECHTE PROBLEM.','What are you planning?':'Was planen Sie?','Name':'Name','Email':'E-Mail','Tell us about it':'Erzählen Sie uns davon','SEND INQUIRY':'ANFRAGE SENDEN','START A PROJECT':'PROJEKT STARTEN','SENDING…':'WIRD GESENDET…','DIRECT CONTACT':'DIREKTER KONTAKT','CLIENT PROJECT':'KUNDENPROJEKT','SOLUTION BLUEPRINT':'LÖSUNGSKONZEPT','CAPABILITIES':'KOMPETENZEN','SCOPE':'UMFANG','THE CHALLENGE':'DIE HERAUSFORDERUNG','OUR RESPONSE':'UNSERE LÖSUNG','THE RESULT':'DAS ERGEBNIS','VISIT LIVE WEBSITE':'LIVE-WEBSITE ÖFFNEN','NEXT CASE':'NÄCHSTES PROJEKT','CLOSE':'SCHLIESSEN','BACK TO TOP':'NACH OBEN',
     'Kosovo / Worldwide':'Kosovo / Weltweit','KOSOVO':'KOSOVO','Thank you.':'Vielen Dank.',
     'Your brief is on its way — we reply within two business days.':'Ihre Anfrage ist unterwegs — wir antworten innerhalb von zwei Werktagen.',
-    'Could not send — please email contact@ossolut.com directly.':'Senden fehlgeschlagen — bitte schreiben Sie direkt an contact@ossolut.com.',
+    'Could not send — please email ossolut1@gmail.com directly.':'Senden fehlgeschlagen — bitte schreiben Sie direkt an ossolut1@gmail.com.',
     'Name, a valid email and a short brief. We reply within two business days.':'Name, eine gültige E-Mail und ein kurzes Briefing. Wir antworten innerhalb von zwei Werktagen.',
     'A short brief is enough. It lands directly with the engineers who will actually build your project.':'Ein kurzes Briefing genügt. Es landet direkt bei den Ingenieuren, die Ihr Projekt tatsächlich umsetzen.',
     'Custom automation, web and mobile products, AI integrations and security work — engagements where design and engineering need to stay connected from the first workshop to production.':'Individuelle Automatisierung, Web- und Mobile-Produkte, KI-Integrationen und Security-Arbeit — Projekte, bei denen Design und Engineering vom ersten Workshop bis zur Produktion verbunden bleiben.',
@@ -40,7 +40,7 @@ const translations = {
     'Independent creative studio':'Studio créatif indépendant','Navigate / 2026':'Navigation / 2026','Work':'Projets','Services':'Services','Studio':'Studio','Contact':'Contact','WE MAKE':'NOUS RENDONS','DIGITAL':'LE DIGITAL','FEEL ALIVE.':'VIVANT.','EXPLORE':'DÉCOUVREZ','OUR WORK':'NOS PROJETS','SCROLL TO DISCOVER':'FAITES DÉFILER','BUILT TO':'CONÇU POUR','BE FELT.':'ÊTRE RESSENTI.','VIEW ALL PROJECTS':'VOIR TOUS LES PROJETS','ONE STUDIO.':'UN STUDIO.','NO SILOS.':'SANS SILOS.','HOW WE WORK':'NOTRE MÉTHODE','FOUR STAGES.':'QUATRE ÉTAPES.','NO THEATRE.':'SANS CINÉMA.','Discover':'Découvrir','Define':'Définir','Build':'Construire','Launch & steward':'Lancer & accompagner','THE STUDIO':'LE STUDIO','SENIOR PEOPLE.':'DES EXPERTS.','ZERO THEATRE.':'SANS CINÉMA.','CORE TEAM':'ÉQUIPE PRINCIPALE','THE USEFUL QUESTIONS.':'LES BONNES QUESTIONS.','GIVE US THE':'PARLEZ-NOUS DU','REAL PROBLEM.':'VRAI PROBLÈME.','What are you planning?':'Que prévoyez-vous ?','Name':'Nom','Email':'E-mail','Tell us about it':'Parlez-nous du projet','SEND INQUIRY':'ENVOYER LA DEMANDE','START A PROJECT':'DÉMARRER UN PROJET','SENDING…':'ENVOI…','DIRECT CONTACT':'CONTACT DIRECT','CLIENT PROJECT':'PROJET CLIENT','SOLUTION BLUEPRINT':'CONCEPT DE SOLUTION','CAPABILITIES':'COMPÉTENCES','SCOPE':'PÉRIMÈTRE','THE CHALLENGE':'LE DÉFI','OUR RESPONSE':'NOTRE RÉPONSE','THE RESULT':'LE RÉSULTAT','VISIT LIVE WEBSITE':'VISITER LE SITE','NEXT CASE':'PROJET SUIVANT','CLOSE':'FERMER','BACK TO TOP':'RETOUR EN HAUT',
     'Kosovo / Worldwide':'Kosovo / Monde entier','Thank you.':'Merci.',
     'Your brief is on its way — we reply within two business days.':'Votre brief est en route — nous répondons sous deux jours ouvrés.',
-    'Could not send — please email contact@ossolut.com directly.':'Échec de l’envoi — écrivez-nous directement à contact@ossolut.com.',
+    'Could not send — please email ossolut1@gmail.com directly.':'Échec de l’envoi — écrivez-nous directement à ossolut1@gmail.com.',
     'Name, a valid email and a short brief. We reply within two business days.':'Un nom, un e-mail valide et un brief court. Nous répondons sous deux jours ouvrés.',
     'A short brief is enough. It lands directly with the engineers who will actually build your project.':'Un brief court suffit. Il arrive directement aux ingénieurs qui construiront réellement votre projet.',
     'Custom automation, web and mobile products, AI integrations and security work — engagements where design and engineering need to stay connected from the first workshop to production.':'Automatisation sur mesure, produits web et mobiles, intégrations IA et travail de sécurité — des missions où design et ingénierie restent connectés du premier atelier à la production.',
@@ -439,7 +439,7 @@ function App() {
             <small>0{index + 1}</small><span>{item}</span><Arrow diagonal />
           </a>
         ))}
-        <div className="menu-bottom"><span>Kosovo / Worldwide</span><span>contact@ossolut.com</span></div>
+        <div className="menu-bottom"><span>Kosovo / Worldwide</span><span>ossolut1@gmail.com</span></div>
       </nav>
 
       <main id="top">
@@ -522,7 +522,7 @@ function App() {
             <button className="open-contact" onClick={openContact}>CONTACT US <Arrow diagonal /></button>
           </div>
           <aside className="direct-contact">
-            <div><span>OR EMAIL US DIRECTLY</span><a href="mailto:contact@ossolut.com">contact@ossolut.com</a><p>For an NDA, RFP or a quick fit check.</p></div>
+            <div><span>OR EMAIL US DIRECTLY</span><a href="mailto:ossolut1@gmail.com">ossolut1@gmail.com</a><p>For an NDA, RFP or a quick fit check.</p></div>
           </aside>
         </section>
 
@@ -530,7 +530,7 @@ function App() {
           <footer className="footer section-pad">
             <div className="footer-brand"><img className="brand-logo" src={logoMark} alt="" /><strong>OSSOLUT</strong></div>
             <div><span>KOSOVO</span><span>AVAILABLE WORLDWIDE</span></div>
-            <div><a href="mailto:contact@ossolut.com">CONTACT@OSSOLUT.COM</a><button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>BACK TO TOP ↑</button></div>
+            <div><a href="mailto:ossolut1@gmail.com">OSSOLUT1@GMAIL.COM</a><button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>BACK TO TOP ↑</button></div>
             <small>© 2026 OSSOLUT</small>
           </footer>
         </section>
@@ -556,7 +556,7 @@ function App() {
                 <label className="hp-field" aria-hidden="true">Website<input tabIndex={-1} autoComplete="off" value={formData.website} onChange={e => setField('website', e.target.value)} /></label>
                 <div className="form-foot"><span>RESPONSE / WITHIN TWO BUSINESS DAYS</span><button type="submit" disabled={formStatus === 'sending'}>{formStatus === 'sending' ? 'SENDING…' : <>SEND INQUIRY <Arrow diagonal /></>}</button></div>
                 {formStatus === 'invalid' && <p className="form-message error" role="alert">Please add your name, a valid email address and a short project brief.</p>}
-                {formStatus === 'error' && <p className="form-message error" role="alert">Could not send — please email contact@ossolut.com directly.</p>}
+                {formStatus === 'error' && <p className="form-message error" role="alert">Could not send — please email ossolut1@gmail.com directly.</p>}
               </form>
             )}
           </div>

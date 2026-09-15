@@ -3,7 +3,7 @@
 //
 // Configure in Vercel → Project → Settings → Environment Variables:
 //   RESEND_API_KEY  (required)  from https://resend.com/api-keys
-//   CONTACT_TO      (optional)  where inquiries land        — default contact@ossolut.com
+//   CONTACT_TO      (optional)  where inquiries land        — default ossolut1@gmail.com
 //   CONTACT_FROM    (optional)  verified sender address     — default onboarding@resend.dev
 //                               (switch to e.g. "Ossolut <inquiry@ossolut.com>"
 //                               once ossolut.com is verified in Resend → Domains)
@@ -60,7 +60,7 @@ module.exports = async (req, res) => {
     },
     body: JSON.stringify({
       from: process.env.CONTACT_FROM || 'Ossolut Website <onboarding@resend.dev>',
-      to: [process.env.CONTACT_TO || 'contact@ossolut.com'],
+      to: [process.env.CONTACT_TO || 'ossolut1@gmail.com'],
       reply_to: email,
       subject: `Project inquiry — ${name}${type ? ` (${type})` : ''}`,
       text: `Name: ${name}\nEmail: ${email}\nProject type: ${type || '—'}\n\n${brief}`,
@@ -77,7 +77,7 @@ module.exports = async (req, res) => {
   if (!response.ok) {
     const detail = await response.text().catch(() => '');
     console.error('Resend error:', response.status, detail);
-    return res.status(502).json({ ok: false, error: 'Could not send your message — please email contact@ossolut.com directly.' });
+    return res.status(502).json({ ok: false, error: 'Could not send your message — please email ossolut1@gmail.com directly.' });
   }
 
   return res.status(200).json({ ok: true });

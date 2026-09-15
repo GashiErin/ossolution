@@ -6,7 +6,7 @@
 //   ANTHROPIC_API_KEY  (required)
 //   CLAUDE_MODEL       (optional)  default claude-haiku-4-5
 //   RESEND_API_KEY     (optional)  lead emails — shared with api/contact.js
-//   CONTACT_TO         (optional)  where lead emails land — default contact@ossolut.com
+//   CONTACT_TO         (optional)  where lead emails land — default ossolut1@gmail.com
 //
 // Local dev uses the Express server in the ossolut-chatbot repo instead
 // (CRA proxy → localhost:4000); keep behavior in sync when editing.
@@ -91,7 +91,7 @@ async function recordLead(input, page) {
         },
         body: JSON.stringify({
           from: process.env.CONTACT_FROM || 'Ossolut Website <onboarding@resend.dev>',
-          to: [process.env.CONTACT_TO || 'contact@ossolut.com'],
+          to: [process.env.CONTACT_TO || 'ossolut1@gmail.com'],
           subject: `Chatbot lead — ${lead.email}`,
           text:
             `Name: ${lead.name || '—'}\nEmail: ${lead.email}\nCompany: ${lead.company || '—'}\n` +
