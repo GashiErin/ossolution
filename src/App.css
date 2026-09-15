@@ -93,6 +93,7 @@
 .acid { background:linear-gradient(145deg,#0b1730,#27406e); color:#fff; }
 .blue { background:linear-gradient(145deg,#12305e,#1d4a8f); color:#fff; }
 .orange { background:linear-gradient(20deg,#33415c,#5d6f8f); color:#fff; }
+.ink { background:linear-gradient(145deg,#141024,#3a2b46); color:#fff; }
 .project-mark { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:clamp(1.45rem,3vw,3rem); font-weight:800; line-height:.95; letter-spacing:-.025em; white-space:pre-line; color:#fff; text-shadow:0 2px 22px rgba(0,0,0,.42); }
 .project-index { position:absolute; top:18px; left:18px; font:10px 'DM Mono'; color:#fff; }
 .workflow-art { position:absolute; inset:0; background:linear-gradient(145deg,#101d3c,#2c4370); }
