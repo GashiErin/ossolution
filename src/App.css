@@ -96,6 +96,8 @@
 .ink { background:linear-gradient(145deg,#141024,#3a2b46); color:#fff; }
 .project-mark { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:clamp(1.45rem,3vw,3rem); font-weight:800; line-height:.95; letter-spacing:-.025em; white-space:pre-line; color:#fff; text-shadow:0 2px 22px rgba(0,0,0,.42); }
 .project-index { position:absolute; top:18px; left:18px; font:10px 'DM Mono'; color:#fff; }
+.project-status { position:absolute; z-index:1; top:15px; right:16px; font:8px 'DM Mono'; letter-spacing:.09em; color:#fff; padding:5px 9px; border:1px solid rgba(255,255,255,.4); border-radius:999px; background:rgba(4,16,35,.45); }
+.deck-status { font-style:normal; margin-left:10px; padding:3px 8px; border:1px solid var(--muted); border-radius:999px; color:var(--muted); white-space:nowrap; }
 .workflow-art { position:absolute; inset:0; background:linear-gradient(145deg,#101d3c,#2c4370); }
 .workflow-art.lead-art { background:linear-gradient(145deg,#0d1a30,#1f4a5e); }
 
